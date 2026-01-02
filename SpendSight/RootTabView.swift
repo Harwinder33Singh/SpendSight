@@ -7,18 +7,33 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct RootTabView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            DashboardView()
+                .tabItem {
+                    Label("Dashboard", systemImage: "chart.pie.fill")
+                }
+            UploadView()
+                .tabItem {
+                    Label("Upload", systemImage: "doc.fill.badge.plus")
+                }
+            TransactionsView()
+                .tabItem {
+                    Label("Transactions", systemImage: "list.bullet.rectangle")
+                }
+            BudgetsView()
+                .tabItem {
+                    Label("Budget", systemImage: "target")
+                }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    RootTabView()
 }

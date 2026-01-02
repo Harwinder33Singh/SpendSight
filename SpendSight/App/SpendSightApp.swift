@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import CoreData
 
 @main
 struct SpendSightApp: App {
+    let persistenceController = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootTabView().environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
