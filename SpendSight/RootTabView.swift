@@ -14,7 +14,7 @@ struct RootTabView: View {
                 .tabItem {
                     Label("Dashboard", systemImage: "chart.pie.fill")
                 }
-            ManualEntryView()
+            CategorySeederDebugView()
                 .tabItem {
                     Label("Manual Entry", systemImage: "doc.fill.badge.plus")
                 }

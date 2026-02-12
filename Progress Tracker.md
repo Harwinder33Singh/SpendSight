@@ -11,11 +11,11 @@
 
 ```
 Phase 1: Foundation          [████████████████████] 100% ✅
-Phase 2: Core Functionality  [██░░░░░░░░░░░░░░░░░░]  10% 🚧
+Phase 2: Core Functionality  [███░░░░░░░░░░░░░░░░░]  15% 🚧
 Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░░░░░]   0% 📅
 ```
 
-**Overall Project**: 33% Complete
+**Overall Project**: 35% Complete
 
 ---
 
@@ -28,14 +28,14 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
 | 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO, CHANGELOG, CONTRIBUTING |
-| 2 | Feb 12 | Core Data extensions (Transaction, Category) | 🚧 | 4 | Building extensions, identified validation bugs |
+| 2 | Feb 12 | Core Data extensions + category seeding integration | 🚧 | 5 | Added CategorySeeder, app launch integration, debug tools |
 | 3 | Feb 13 | Core Data extensions (Account, Income, SavingsPlan) | 📅 | - | Complete remaining 3 extensions |
-| 4 | Feb 14 | CategorySeeder + Default categories | 📅 | - | Create seeder, test default categories |
+| 4 | Feb 14 | CategorySeeder + Default categories | ✅ | - | Completed early on Feb 12 |
 | 5 | Feb 15 | Manual Entry form UI | 📅 | - | Build form layout and components |
 | 6 | Feb 16 | Manual Entry validation & save | 📅 | - | Implement validation and Core Data save |
 | 7 | Feb 17 | Manual Entry testing & polish | 📅 | - | Test thoroughly, add polish and feedback |
 
-**Week 1 Progress**: ███░░░░░ 25%
+**Week 1 Progress**: ████░░░░ 35%
 
 ---
 
@@ -120,18 +120,18 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ---
 
-#### Task 2: Default Categories 📅
-**Duration**: 1 day | **Status**: Not Started | **Priority**: HIGH
+#### Task 2: Default Categories ✅
+**Duration**: 1 day | **Status**: Completed Early (Day 2) | **Priority**: HIGH
 
-- [ ] CategorySeeder.swift created
-- [ ] 10 default categories defined
-- [ ] Seeding logic implemented
-- [ ] Integration with app launch
-- [ ] Testing completed
+- [x] CategorySeeder.swift created
+- [x] 10 default categories defined
+- [x] Seeding logic implemented
+- [x] Integration with app launch
+- [ ] Production-flow testing completed (debug testing helpers added)
 
-**Progress**: ░░░░░░░░░░ 0/5 steps (0%)
+**Progress**: ████████░░ 4/5 steps (80%)
 
-**Scheduled**: Feb 14 (Day 4)
+**Scheduled**: Feb 14 (Day 4) | **Actual Progress Started**: Feb 12 (Day 2)
 
 ---
 
@@ -231,6 +231,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | Project Plan Complete | Feb 11 | ✅ | 100% |
 | Core Data Extensions | Feb 13 | 🚧 | 40% |
 | Manual Entry Working | Feb 17 | 📅 | 0% |
+| Category Seeder Integrated | Feb 14 | ✅ | 80% |
 | Transactions List | Feb 21 | 📅 | 0% |
 | Dashboard Analytics | Feb 24 | 📅 | 0% |
 | Budget Management | Feb 28 | 📅 | 0% |
@@ -254,7 +255,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 ## 📝 Daily Log
 
 ### 2026-02-12 (Day 2) 🚧
-**Focus**: Core Data Extensions - Part 1
+**Focus**: Core Data Extensions + Category Seeding Integration
 
 **Completed**:
 - ✅ Started Transaction+Extensions.swift
@@ -267,6 +268,15 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
   - Added color conversion helpers
   - Implemented fetch requests
   - Added sort descriptors (needs fixes)
+- ✅ Implemented CategorySeeder.swift
+  - Added 10 default categories (name, color, icon, optional budget)
+  - Added one-time seeding flag with UserDefaults (`hasSeededCategories`)
+  - Added `seedIfNeeded`, `resetSeedingFlag`, and `needsSeeding`
+- ✅ Integrated category seeding at app launch (`SpendSightApp`)
+- ✅ Added CategorySeeder debug/test helpers and debug view
+  - Print categories
+  - Delete categories
+  - Full reset and re-seed actions
 
 **Bugs Identified**:
 1. ⚠️ Transaction validation logic uses backwards boolean check
@@ -274,13 +284,12 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 **Blockers**: None
 
-**Hours Worked**: 4 hours
+**Hours Worked**: 5 hours
 
 **Notes**: 
-- Good progress on extensions, but found validation logic bug
-- Need to fix validation to use guard-let pattern
-- Category sort descriptors need cleanup
-- Both bugs are minor and easily fixable
+- Category seeding work moved ahead of schedule (originally Day 4)
+- Debug utilities are in place to verify and reset seeding behavior quickly
+- Extension bug fixes still remain in progress
 
 **Tomorrow's Plan**:
 1. Fix validation bugs in Transaction+Extensions
@@ -328,6 +337,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 - [ ] Complete Income+Extensions.swift
 - [ ] Complete SavingsPlan+Extensions.swift
 - [ ] Test all extensions together
+- [ ] Validate seeded categories in production flows (pickers/forms)
 
 **Completed**:
 
@@ -374,12 +384,12 @@ _None yet_
 
 | Week | Planned Hours | Actual Hours | Variance |
 |------|---------------|--------------|----------|
-| Week 1 | 30 | 7 | -23 |
+| Week 1 | 30 | 8 | -22 |
 | Week 2 | 30 | 0 | -30 |
 | Week 3 | 30 | 0 | -30 |
-| **Total** | **90** | **7** | **-83** |
+| **Total** | **90** | **8** | **-82** |
 
-**Average daily hours**: 3.5 hours/day actual (planned 4-5)
+**Average daily hours**: 4.0 hours/day actual (planned 4-5)
 
 ---
 
@@ -387,7 +397,7 @@ _None yet_
 
 ### Week 1 (In Progress)
 - **Day 1**: Good documentation saves time later
-- **Day 2**: Finding bugs early is better than later - validation logic issues identified before they caused problems
+- **Day 2**: Shipping a small utility early (CategorySeeder) de-risks upcoming form work
 
 ---
 
@@ -425,4 +435,4 @@ Day 21: █░░░░░░░░░░░░░░░░░░░░ (0/21) �
 
 **Remember**: Update this tracker daily to stay on track and motivated! 🚀
 
-**Next Update**: End of Day 2 (Feb 12)
+**Next Update**: End of Day 3 (Feb 13)

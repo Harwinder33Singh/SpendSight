@@ -9,7 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Week 1 (Feb 11-17, 2026) - In Progress
 
 #### [0.2.0] - 2026-02-12
-**Day 2 of 21 - Core Data Extensions**
+**Day 2 of 21 - Core Data Extensions + Category Seeding**
+
+##### Added
+- `CategorySeeder` utility with one-time seeding guard via UserDefaults (`hasSeededCategories`)
+- 10 default categories with icon, color, and optional monthly budgets
+- Category seeding debug/testing helpers (`print`, `delete`, `full reset`, `status`)
+- `CategorySeederDebugView` for manual verification of seeding behavior
+
+##### Changed
+- App launch flow now triggers `CategorySeeder.seedIfNeeded(...)` from `SpendSightApp`
+- `RootTabView` temporarily points the "Manual Entry" tab to `CategorySeederDebugView` for validation
 
 ##### In Progress
 - Core Data extensions for Transaction entity
@@ -96,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Status**: 🚧 In Progress (Day 2 of 21)
 
 **Current Sprint**: Week 1 - Foundation & Manual Entry
-**Current Task**: Core Data Extensions (Day 2-3)
+**Current Task**: Validate category seeding flow and finish Core Data extensions
 
 **Target Features**:
 - Manual transaction entry ⏳
@@ -125,7 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Development Notes
 
 ### 2026-02-12 (Day 2)
-**Focus**: Core Data Extensions
+**Focus**: Core Data Extensions + Category Seeding
 
 **Issues Discovered**:
 - Transaction validation uses incorrect boolean logic
@@ -135,6 +145,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Progress**:
 - Started Transaction+Extensions.swift
 - Started Category+Extensions.swift
+- Implemented CategorySeeder.swift
+- Integrated one-time seeding into app launch
+- Added CategorySeederDebugView and test helpers
 - Identified and documented bugs
 
 **Next Steps**:

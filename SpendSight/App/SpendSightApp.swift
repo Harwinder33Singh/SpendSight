@@ -11,9 +11,14 @@ import CoreData
 @main
 struct SpendSightApp: App {
     let persistenceController = PersistenceController.shared
+    
     var body: some Scene {
         WindowGroup {
-            RootTabView().environment(\.managedObjectContext, persistenceController.container.viewContext)
+            RootTabView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onAppear {
+                    CategorySeeder.seedIfNeeded(modelContext: persistenceController.container.viewContext)
+                }
         }
     }
 }

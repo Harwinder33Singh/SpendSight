@@ -79,15 +79,16 @@ SpendSight/Core/Extensions/
 
 ---
 
-### Task 2: Default Categories Setup (Day 4 - Feb 14) 📅
-**Priority**: HIGH | **Status**: NOT STARTED | **Depends On**: Task 1
+### Task 2: Default Categories Setup (Day 4 - Feb 14) ✅
+**Priority**: HIGH | **Status**: MOSTLY COMPLETE (DONE EARLY ON DAY 2) | **Depends On**: Task 1
 
 #### CategorySeeder.swift
-- [ ] Create CategorySeeder utility class
-- [ ] Define 10 default categories array
-- [ ] Implement `seedIfNeeded()` method
-- [ ] Add check to prevent duplicate seeding (UserDefaults flag)
-- [ ] Test seeding on first launch
+- [x] Create CategorySeeder utility class
+- [x] Define 10 default categories array
+- [x] Implement `seedIfNeeded()` method
+- [x] Add check to prevent duplicate seeding (UserDefaults flag)
+- [x] Add helper methods (`resetSeedingFlag`, `needsSeeding`) and debug testing helpers
+- [ ] Verify seeding behavior in production UI flows
 
 #### Default Categories to Create:
 1. 🛒 **Groceries** - `#4CAF50` - `cart.fill` - Budget: $500
@@ -108,15 +109,16 @@ SpendSight/Core/Utilities/
 ```
 
 **Integration**:
-- [ ] Call seeder in `SpendSightApp.swift` on first launch
-- [ ] Add UserDefaults key: `"hasSeededCategories"`
-- [ ] Test category creation and display
+- [x] Call seeder in `SpendSightApp.swift` on first launch
+- [x] Add UserDefaults key: `"hasSeededCategories"`
+- [x] Add debug view/actions for category creation/reset validation
+- [ ] Test category creation in non-debug user flows (pickers/lists)
 
 **Acceptance Criteria**:
 - ✅ Categories only seed once
 - ✅ All 10 categories created with correct properties
 - ✅ Colors and icons properly assigned
-- ✅ Categories appear in pickers/lists
+- [ ] Categories appear in pickers/lists
 - ✅ Budgets set correctly
 
 ---
@@ -407,6 +409,9 @@ SpendSight/Shared/Components/
 - [ ] Complete Transaction+Extensions.swift
 - [ ] Complete Category+Extensions.swift
 - [ ] Test both extensions thoroughly
+- [x] Create `CategorySeeder.swift`
+- [x] Integrate seeder into `SpendSightApp.swift` on launch
+- [x] Add category seeder debug/test helper view
 
 ### Tomorrow (Day 3 - Feb 13)
 - [ ] Complete Account+Extensions.swift
@@ -416,9 +421,9 @@ SpendSight/Shared/Components/
 - [ ] Prepare for CategorySeeder
 
 ### Day 4 (Feb 14)
-- [ ] Create CategorySeeder.swift
-- [ ] Integrate seeder into app launch
-- [ ] Test default categories
+- [x] Create CategorySeeder.swift (completed early on Feb 12)
+- [x] Integrate seeder into app launch (completed early on Feb 12)
+- [x] Test default categories via debug helper actions (completed early on Feb 12)
 - [ ] Begin Manual Entry form design
 
 ### Days 5-7 (Feb 15-17)

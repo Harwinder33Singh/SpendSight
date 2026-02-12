@@ -25,7 +25,7 @@ SpendSight is a personal finance tracking app that makes it easy to:
 - [x] Tab-based navigation structure
 - [x] Persistence layer setup
 - [x] Project architecture established
-- [x] Core Data extensions (in progress - Day 2)
+- [x] Default category seeding system (10 categories, first-launch only)
 
 ### In Development (Phase 2) 🚧
 - [ ] Manual transaction entry with form validation (Week 1)
@@ -141,7 +141,7 @@ open SpendSight.xcodeproj
 
 The app will automatically:
 - Initialize Core Data stack
-- Create default categories (implementation in progress)
+- Create 10 default categories on first launch
 - Set up persistence layer
 
 ## 📖 Usage
@@ -168,7 +168,7 @@ The app will automatically:
 ## 🛠 Development
 
 ### Current Sprint (Week 1: Feb 11-17, 2026)
-**Goal**: Manual Entry & Core Data Extensions
+**Goal**: Core Data extensions, category seeding, and Manual Entry preparation
 
 **Status**: Day 2 of 21 - 🚧 In Progress
 
@@ -179,9 +179,12 @@ The app will automatically:
   - [ ] Income+Extensions.swift
   - [ ] SavingsPlan+Extensions.swift
 
-- [ ] Task 2: Default categories setup (Day 4 - Feb 14)
-  - [ ] CategorySeeder.swift
-  - [ ] 10 default categories with icons
+- [x] Task 2: Default categories setup (completed early on Day 2 - Feb 12)
+  - [x] CategorySeeder.swift
+  - [x] 10 default categories with icons
+  - [x] One-time seeding via UserDefaults flag
+  - [x] Integrated with app launch in `SpendSightApp`
+  - [x] Added `CategorySeederDebugView` for manual verification
 
 - [ ] Task 3: Manual Entry form (Days 5-7)
   - [ ] Complete form UI
@@ -233,7 +236,7 @@ The app will automatically:
 ### Week 1: Foundation (Current - Days 1-7)
 - [x] Day 1: Project planning & documentation (Feb 11)
 - [ ] Days 2-3: Core Data extensions (Feb 12-13)
-- [ ] Day 4: Default categories seeding (Feb 14)
+- [x] Day 4 scope (default categories seeding) completed early on Feb 12
 - [ ] Days 5-7: Manual entry form (Feb 15-17)
 
 ### Week 2: Core Features (Days 8-14)
@@ -296,7 +299,7 @@ For questions or issues:
 
 **Current Phase**: Phase 2 - Core Functionality
 
-**Current Task**: Core Data extensions (Transaction & Category)
+**Current Task**: Validate category seeding flow and continue Core Data extensions
 
 **Sprint**: Week 1, Day 2 of 21
 
@@ -304,7 +307,7 @@ For questions or issues:
 
 **Target MVP Date**: March 4, 2026
 
-**Latest Update**: Began implementing Transaction and Category Core Data extensions with proper validation, computed properties, and fetch request builders.
+**Latest Update**: Implemented `CategorySeeder`, wired one-time category seeding on app launch, and added `CategorySeederDebugView` plus helper utilities for validation/reset testing.
 
 ---
 
