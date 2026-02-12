@@ -1,6 +1,6 @@
 # SpendSight - Development TODO
 
-**Last Updated**: February 11, 2026  
+**Last Updated**: February 12, 2026  
 **Current Sprint**: Week 1 - Foundation & Manual Entry
 
 ---
@@ -51,6 +51,8 @@
 - [ ] Create fetch request for active plans
 - [ ] Test savings calculations
 
+Current focus is Transaction and Category convenience helpers; Account, Income, and SavingsPlan extensions follow once these stabilize.
+
 **Files to Create**:
 ```
 SpendSight/Core/Extensions/
@@ -71,7 +73,7 @@ SpendSight/Core/Extensions/
 ---
 
 ### Task 2: Default Categories Setup (Day 3) ⏳
-**Priority**: HIGH | **Status**: NOT STARTED | **Depends On**: Task 1
+**Priority**: HIGH | **Status**: PLANNED (seeding scheduled for Feb 14) | **Depends On**: Task 1
 
 #### CategorySeeder.swift
 - [ ] Create CategorySeeder utility class
@@ -124,7 +126,7 @@ SpendSight/Core/Utilities/
 ---
 
 ### Task 3: Manual Entry Form (Days 4-7) ⏳
-**Priority**: CRITICAL | **Status**: NOT STARTED | **Depends On**: Task 1, 2
+**Priority**: CRITICAL | **Status**: IN PROGRESS (wireframes & validation defined) | **Depends On**: Task 1, 2
 
 #### ManualEntryView.swift - Complete Rewrite
 - [ ] Create form state management with @State variables
@@ -201,6 +203,8 @@ SpendSight/Shared/Components/
 - ✅ UI is intuitive and responsive
 - ✅ No crashes on save/cancel
 - ✅ Data persists after app restart
+
+Manual entry doc already captures field requirements, validation rules, and save feedback expectations before coding begins.
 
 ---
 

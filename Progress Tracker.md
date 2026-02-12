@@ -2,7 +2,7 @@
 
 **Project Start**: January 2, 2026  
 **Target MVP**: March 4, 2026  
-**Last Updated**: February 11, 2026
+**Last Updated**: February 12, 2026
 
 ---
 
@@ -14,7 +14,7 @@ Phase 2: Core Functionality  [░░░░░░░░░░░░░░░░�
 Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░░░░░]   0% 📅
 ```
 
-**Overall Project**: 25% Complete
+**Overall Project**: 30% Complete
 
 ---
 
@@ -27,7 +27,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
 | 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO |
-| 2 | Feb 12 | Core Data extensions (Transaction, Category) | ⏳ | - | Starting today |
+| 2 | Feb 12 | Core Data extensions (Transaction, Category) | 🚧 | 4 | Building Transaction & Category Core Data extensions |
 | 3 | Feb 13 | Core Data extensions (Account, Income, SavingsPlan) | 📅 | - | - |
 | 4 | Feb 14 | CategorySeeder + Default categories | 📅 | - | - |
 | 5 | Feb 15 | Manual Entry form UI | 📅 | - | - |
@@ -104,6 +104,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
   - [ ] Fetch requests
 
 **Progress**: ░░░░░░░░░░ 0/5 files (0%)
+Transactions and Category extensions are in active development while the remaining entities await completion.
 
 ---
 
@@ -117,6 +118,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 - [ ] Testing completed
 
 **Progress**: ░░░░░░░░░░ 0/5 steps (0%)
+Seeding is scheduled for Feb 14 after core category metadata is locked in.
 
 ---
 
@@ -137,6 +139,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 - [ ] Form reset functionality
 
 **Progress**: ░░░░░░░░░░░░ 0/12 items (0%)
+Manual entry wireframes, validation targets, and field requirements are drafted ahead of UI build.
 
 ---
 

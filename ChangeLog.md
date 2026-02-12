@@ -8,14 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Week 1 (In Progress)
-- Core Data extensions for all entities
-- Default category seeding system
-- Manual transaction entry form
+- Core Data extensions for Transaction and Category entities (in progress)
+- Default category seeding system (scheduled for Feb 14)
+- Manual transaction entry form (planning UI & validation)
 
 ### Week 2 (Planned)
 - Transactions list with filtering
 - Dashboard with spending analytics
 - Swift Charts integration
+  (Manual entry work blocks start of Week 2 deliverables)
 
 ### Week 3 (Planned)
 - Budget management system
@@ -65,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ### Phase 2: Core Functionality (Feb 11 - Mar 4, 2026)
-**Status**: 🚧 In Progress
+**Status**: 🚧 In Progress (Manual entry prioritized)
 
 **Target Features**:
 - Manual transaction entry
@@ -98,6 +99,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Established 3-week development timeline
 - Prioritized critical path tasks
 - Documented all features and requirements
+
+### 2026-02-12
+- Started implementing Transaction and Category Core Data extensions
+- Drafted Manual Entry form wireframes and validation criteria
+- Scheduled default category seeding for Feb 14 launch prep
 
 ### 2026-01-02
 - Project inception

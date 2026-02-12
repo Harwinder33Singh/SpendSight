@@ -27,7 +27,7 @@ SpendSight is a personal finance tracking app that makes it easy to:
 - [x] Project architecture established
 
 ### In Development (Phase 2)
-- [ ] Manual transaction entry with form validation
+- [ ] Manual transaction entry with form validation (In progress)
 - [ ] Transaction list with filtering and search
 - [ ] Dashboard with spending analytics
 - [ ] Category management with icons and colors
@@ -222,8 +222,8 @@ The app will automatically:
 
 ### Week 1: Foundation (Current)
 - [x] Project setup and architecture
-- [ ] Core Data extensions
-- [ ] Manual entry form
+- [ ] Core Data extensions (Transaction & Category work underway)
+- [ ] Manual entry form (adds UI & validation once extensions stabilize)
 
 ### Week 2: Core Features
 - [ ] Transactions list view
@@ -265,8 +265,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions or issues:
 - Create an issue in the GitHub repository
-- Check the documentation in `/docs`
-- Review the project plan PDF
+- Review `Progress Tracker.md` and `TODO.md` for the current sprint
+- Check `ChangeLog.md` for recent decisions or work items
 
 ## 🙏 Acknowledgments
 
@@ -276,11 +276,11 @@ For questions or issues:
 
 ## 📊 Project Status
 
-**Last Updated**: February 11, 2026
+**Last Updated**: February 12, 2026
 
-**Current Phase**: Phase 1 - Foundation Complete, Moving to Phase 2
+**Current Phase**: Phase 2 - Core Functionality (Manual Entry in progress)
 
-**Next Milestone**: Manual Entry Implementation (Week 1)
+**Next Milestone**: Complete transaction entry experience (Week 1)
 
 **Target MVP Date**: March 4, 2026 (3 weeks from start of development)
 

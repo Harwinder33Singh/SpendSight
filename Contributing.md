@@ -54,16 +54,13 @@ open SpendSight.xcodeproj
 ### Branch Strategy
 
 - `main` - Stable, production-ready code
-- `develop` - Integration branch for features
-- `feature/*` - New features (e.g., `feature/manual-entry`)
-- `bugfix/*` - Bug fixes (e.g., `bugfix/fix-date-picker`)
-- `hotfix/*` - Critical production fixes
+- `feature/*` - Dedicated branch for isolated work on a feature
 
 ### Creating a Feature Branch
 
 ```bash
-git checkout develop
-git pull origin develop
+git checkout main
+git pull origin main
 git checkout -b feature/your-feature-name
 ```
 
@@ -72,11 +69,11 @@ git checkout -b feature/your-feature-name
 1. Make small, focused commits
 2. Write descriptive commit messages
 3. Test your changes thoroughly
-4. Keep your branch up to date with develop
+4. Keep your branch up to date with main
 
 ```bash
 git fetch origin
-git rebase origin/develop
+git rebase origin/main
 ```
 
 ## Coding Standards
@@ -313,10 +310,10 @@ Fixes #67
 
 1. **Update Your Branch**
 ```bash
-git checkout develop
-git pull origin develop
+git checkout main
+git pull origin main
 git checkout your-feature-branch
-git rebase develop
+git rebase main
 ```
 
 2. **Test Thoroughly**
@@ -328,7 +325,7 @@ git rebase develop
 
 3. **Review Your Changes**
 ```bash
-git diff develop...your-feature-branch
+git diff main...your-feature-branch
 ```
 
 4. **Update Documentation**
@@ -347,7 +344,7 @@ git push origin feature/your-feature-name
 2. **Open Pull Request on GitHub**
 - Go to the repository
 - Click "New Pull Request"
-- Select `develop` as the base branch
+- Select `main` as the base branch
 - Select your feature branch as the compare branch
 
 3. **Fill Out PR Template**
@@ -417,7 +414,7 @@ Closes #42
 - [ ] All checks passing
 - [ ] At least one approval
 - [ ] No unresolved conversations
-- [ ] Branch is up to date with develop
+- [ ] Branch is up to date with main
 
 2. **Merge Strategy**
 - Use "Squash and Merge" for feature branches
