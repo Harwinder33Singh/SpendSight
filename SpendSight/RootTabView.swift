@@ -14,9 +14,9 @@ struct RootTabView: View {
                 .tabItem {
                     Label("Dashboard", systemImage: "chart.pie.fill")
                 }
-            UploadView()
+            ManualEntryView()
                 .tabItem {
-                    Label("Upload", systemImage: "doc.fill.badge.plus")
+                    Label("Manual Entry", systemImage: "doc.fill.badge.plus")
                 }
             TransactionsView()
                 .tabItem {
