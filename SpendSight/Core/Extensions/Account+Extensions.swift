@@ -306,9 +306,9 @@ enum AccountValidationError: LocalizedError {
 
 // MARK: - Identifiable Conformance (for SwiftUI)
 
-extension Account: Identifiable {
-    // Core Data objects already have an objectID, but we're using our UUID
-}
+//extension Account: Identifiable {
+//    // Core Data objects already have an objectID, but we're using our UUID
+//}
 
 // MARK: - Account Type Helpers
 

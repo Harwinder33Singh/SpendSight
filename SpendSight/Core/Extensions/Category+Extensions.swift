@@ -242,9 +242,9 @@ enum CategoryValidationError: LocalizedError {
 
 // Mark: - Identifiable Conformance (for SwiftUI)
 
-extension Category: Identifiable {
-    // Core Data objects already have an objectID, but we're using our UUID
-}
+// extension Category: Identifiable {
+//     // Core Data objects already have an objectID, but we're using our UUID
+// }
 
 // MARK: - Color Extension for Hex Support
 
