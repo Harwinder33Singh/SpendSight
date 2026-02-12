@@ -20,24 +20,6 @@
 - [ ] Add `isExpense` and `isIncome` computed properties
 - [ ] Add `absoluteAmount` computed property
 - [ ] Create fetch request builder with filters
-- [ ] **FIX: Validation method logic** ⚠️
-  ```swift
-  // CURRENT (WRONG):
-  guard ((title?.trimmingCharacters(in: .whitespaces).isEmpty) == nil) else {
-      throw ValidationError.invalidTitle
-  }
-  
-  // CORRECT:
-  guard let title = title?.trimmingCharacters(in: .whitespaces), !title.isEmpty else {
-      throw ValidationError.invalidTitle
-  }
-  ```
-  - [ ] Fix title validation
-  - [ ] Fix merchant validation
-  - [ ] Fix paymentMethod validation
-- [ ] Test all extensions
-
-**Status**: Validation logic needs fixing (lines 181-194)
 
 #### Category+Extensions.swift ⏳
 - [ ] Create convenience initializer with defaults
@@ -47,12 +29,7 @@
 - [ ] Add budget-related computed properties
 - [ ] Create fetch request for all categories
 - [ ] Add sort descriptor helpers
-- [ ] **FIX: Sort descriptor naming** ⚠️
-  - Line 85: `sortByNameDecending` → should be `sortByNameDescending`
-  - Line 91: `sortByNameDescending` actually sorts by budget (wrong implementation)
 - [ ] Test category creation and retrieval
-
-**Status**: Typo and sort descriptor mismatch needs fixing
 
 #### Account+Extensions.swift
 - [ ] Create convenience initializer
@@ -85,16 +62,12 @@
 **Files to Create**:
 ```
 SpendSight/Core/Extensions/
-├── Transaction+Extensions.swift (IN PROGRESS - needs fixes)
-├── Category+Extensions.swift (IN PROGRESS - needs fixes)
+├── Transaction+Extensions.swift
+├── Category+Extensions.swift 
 ├── Account+Extensions.swift
 ├── Income+Extensions.swift
 └── SavingsPlan+Extensions.swift
 ```
-
-**Bugs to Fix**:
-1. ⚠️ Transaction validation logic (lines 181-194) - backwards boolean logic
-2. ⚠️ Category sort descriptor typo and mismatch
 
 **Acceptance Criteria**:
 - ✅ All entities have convenience initializers
