@@ -170,14 +170,14 @@ The app will automatically:
 ### Current Sprint (Week 1: Feb 11-17, 2026)
 **Goal**: Core Data extensions, category seeding, and Manual Entry preparation
 
-**Status**: Day 2 of 21 - 🚧 In Progress
+**Status**: Day 2 of 21 - 🚧 In Progress (Task 1 and Task 2 complete)
 
-- [ ] Task 1: Create Core Data extensions (Days 2-3)
-  - [ ] Transaction+Extensions.swift (In Progress)
-  - [ ] Category+Extensions.swift (In Progress)
-  - [ ] Account+Extensions.swift
-  - [ ] Income+Extensions.swift
-  - [ ] SavingsPlan+Extensions.swift
+- [x] Task 1: Create Core Data extensions (completed on Day 2 - Feb 12)
+  - [x] Transaction+Extensions.swift
+  - [x] Category+Extensions.swift
+  - [x] Account+Extensions.swift
+  - [x] Income+Extensions.swift
+  - [x] SavingsPlan+Extensions.swift
 
 - [x] Task 2: Default categories setup (completed early on Day 2 - Feb 12)
   - [x] CategorySeeder.swift
@@ -235,7 +235,7 @@ The app will automatically:
 
 ### Week 1: Foundation (Current - Days 1-7)
 - [x] Day 1: Project planning & documentation (Feb 11)
-- [ ] Days 2-3: Core Data extensions (Feb 12-13)
+- [x] Days 2-3: Core Data extensions (completed early on Feb 12)
 - [x] Day 4 scope (default categories seeding) completed early on Feb 12
 - [ ] Days 5-7: Manual entry form (Feb 15-17)
 

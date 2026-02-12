@@ -11,11 +11,11 @@
 
 ```
 Phase 1: Foundation          [████████████████████] 100% ✅
-Phase 2: Core Functionality  [███░░░░░░░░░░░░░░░░░]  15% 🚧
+Phase 2: Core Functionality  [█████░░░░░░░░░░░░░░░]  25% 🚧
 Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░░░░░]   0% 📅
 ```
 
-**Overall Project**: 35% Complete
+**Overall Project**: 40% Complete
 
 ---
 
@@ -28,14 +28,14 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
 | 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO, CHANGELOG, CONTRIBUTING |
-| 2 | Feb 12 | Core Data extensions + category seeding integration | 🚧 | 5 | Added CategorySeeder, app launch integration, debug tools |
-| 3 | Feb 13 | Core Data extensions (Account, Income, SavingsPlan) | 📅 | - | Complete remaining 3 extensions |
+| 2 | Feb 12 | Core Data extensions + category seeding integration | ✅ | 5 | Completed all 5 extension files, seeder integration, debug tools |
+| 3 | Feb 13 | Core Data follow-ups + Manual Entry kickoff | 📅 | - | Fix routing/helper issues, start ManualEntryView implementation |
 | 4 | Feb 14 | CategorySeeder + Default categories | ✅ | - | Completed early on Feb 12 |
 | 5 | Feb 15 | Manual Entry form UI | 📅 | - | Build form layout and components |
 | 6 | Feb 16 | Manual Entry validation & save | 📅 | - | Implement validation and Core Data save |
 | 7 | Feb 17 | Manual Entry testing & polish | 📅 | - | Test thoroughly, add polish and feedback |
 
-**Week 1 Progress**: ████░░░░ 35%
+**Week 1 Progress**: █████░░░ 45%
 
 ---
 
@@ -80,43 +80,45 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### 🔴 Critical Path Tasks
 
-#### Task 1: Core Data Extensions 🚧
-**Duration**: 2 days | **Status**: In Progress (Day 1 of 2) | **Priority**: HIGHEST
+#### Task 1: Core Data Extensions ✅
+**Duration**: 2 days | **Status**: Completed Early (Day 2) | **Priority**: HIGHEST
 
-- [ ] Transaction+Extensions.swift (75% complete)
+- [x] Transaction+Extensions.swift (completed)
   - [x] Convenience initializer
   - [x] Display properties
   - [x] Fetch requests
-  - [ ] Fix validation methods (bugs identified)
-  - [ ] Testing
-- [ ] Category+Extensions.swift (75% complete)
+  - [x] Validation methods
+- [x] Category+Extensions.swift (completed)
   - [x] Convenience initializer
   - [x] Color conversion
   - [x] Fetch requests
-  - [ ] Fix sort descriptor issues (bugs identified)
-  - [ ] Testing
-- [ ] Account+Extensions.swift (0% complete)
-  - [ ] Convenience initializer
-  - [ ] Display properties
-  - [ ] Validation
-- [ ] Income+Extensions.swift (0% complete)
-  - [ ] Convenience initializer
-  - [ ] Display properties
-  - [ ] Fetch requests
-- [ ] SavingsPlan+Extensions.swift (0% complete)
-  - [ ] Convenience initializer
-  - [ ] Progress calculations
-  - [ ] Fetch requests
+  - [x] Sort descriptors/helpers
+  - [x] Validation methods
+- [x] Account+Extensions.swift (completed)
+  - [x] Convenience initializer
+  - [x] Display properties
+  - [x] Validation
+  - [x] Fetch and helper methods
+- [x] Income+Extensions.swift (completed)
+  - [x] Convenience initializer
+  - [x] Display properties
+  - [x] Fetch requests
+  - [x] Validation
+- [x] SavingsPlan+Extensions.swift (completed)
+  - [x] Convenience initializer
+  - [x] Progress calculations
+  - [x] Fetch requests
+  - [x] Validation
 
-**Progress**: ████░░░░░░ 2/5 files (40%)
+**Progress**: ██████████ 5/5 files (100%)
 
-**Bugs Found**:
-1. ⚠️ Transaction validation logic (lines 181-194) - backwards boolean logic
-2. ⚠️ Category sort descriptor typo and mismatch
+**Known Follow-ups Found in Review**:
+1. ⚠️ Manual Entry tab currently routes to `CategorySeederDebugView` instead of `ManualEntryView`
+2. ⚠️ `Category.createDefaultCategories` defines 9 defaults (missing "Housing"), while seeder defines 10
 
 **Next Steps**:
-- Fix validation bugs today
-- Complete Account, Income, SavingsPlan tomorrow
+- Fix the 2 follow-up issues above
+- Start Task 3 implementation (Manual Entry form)
 
 ---
 
@@ -219,8 +221,8 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### Risk Assessment
 - ✅ **On Track**: Currently on schedule
-- ⚠️ **Minor Issues**: 2 bugs identified but fixable
-- 🔴 **Blockers**: None
+- ⚠️ **Minor Issues**: 2 implementation mismatches identified in static review
+- 🔴 **Blockers**: Manual Entry tab currently points to debug screen
 
 ---
 
@@ -229,14 +231,14 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | Milestone | Target Date | Status | Completion |
 |-----------|-------------|--------|------------|
 | Project Plan Complete | Feb 11 | ✅ | 100% |
-| Core Data Extensions | Feb 13 | 🚧 | 40% |
+| Core Data Extensions | Feb 13 | ✅ | 100% |
 | Manual Entry Working | Feb 17 | 📅 | 0% |
 | Category Seeder Integrated | Feb 14 | ✅ | 80% |
 | Transactions List | Feb 21 | 📅 | 0% |
 | Dashboard Analytics | Feb 24 | 📅 | 0% |
 | Budget Management | Feb 28 | 📅 | 0% |
 | Settings Complete | Mar 2 | 📅 | 0% |
-| **MVP Launch** | **Mar 4** | 📅 | **30%** |
+| **MVP Launch** | **Mar 4** | 📅 | **38%** |
 
 ---
 
@@ -248,7 +250,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 - ✅ **Debugger**: Identified validation bugs early
 
 ### Next Achievement
-- 🎯 **Data Master**: Complete all Core Data extensions (40% done)
+- 🎯 **Form Builder**: Ship first working Manual Entry flow (save + validation)
 
 ---
 
@@ -258,16 +260,16 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 **Focus**: Core Data Extensions + Category Seeding Integration
 
 **Completed**:
-- ✅ Started Transaction+Extensions.swift
-  - Created convenience initializer
-  - Added display properties
-  - Implemented fetch request builders
-  - Added validation methods (needs bug fixes)
-- ✅ Started Category+Extensions.swift
-  - Created convenience initializer
-  - Added color conversion helpers
-  - Implemented fetch requests
-  - Added sort descriptors (needs fixes)
+- ✅ Completed Transaction+Extensions.swift
+  - Convenience initializer, display properties, fetch request builders, validation
+- ✅ Completed Category+Extensions.swift
+  - Convenience initializer, color conversion helpers, fetch/sort helpers, validation
+- ✅ Completed Account+Extensions.swift
+  - Convenience initializer, display properties, fetch/sort helpers, validation, balance helpers
+- ✅ Completed Income+Extensions.swift
+  - Convenience initializer, display properties, fetch/sort helpers, validation
+- ✅ Completed SavingsPlan+Extensions.swift
+  - Convenience initializer, progress helpers, fetch/sort helpers, validation
 - ✅ Implemented CategorySeeder.swift
   - Added 10 default categories (name, color, icon, optional budget)
   - Added one-time seeding flag with UserDefaults (`hasSeededCategories`)
@@ -278,9 +280,9 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
   - Delete categories
   - Full reset and re-seed actions
 
-**Bugs Identified**:
-1. ⚠️ Transaction validation logic uses backwards boolean check
-2. ⚠️ Category sort descriptors have typo and mismatch
+**Review Findings (Static)**:
+1. ⚠️ Manual Entry tab currently opens `CategorySeederDebugView` (`RootTabView.swift`)
+2. ⚠️ `Category.createDefaultCategories` has 9 defaults, missing "Housing" (`Category+Extensions.swift`)
 
 **Blockers**: None
 
@@ -289,14 +291,12 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 **Notes**: 
 - Category seeding work moved ahead of schedule (originally Day 4)
 - Debug utilities are in place to verify and reset seeding behavior quickly
-- Extension bug fixes still remain in progress
+- Core Data extension implementation is complete; next is feature integration
 
 **Tomorrow's Plan**:
-1. Fix validation bugs in Transaction+Extensions
-2. Fix sort descriptor issues in Category+Extensions
-3. Complete Account+Extensions.swift
-4. Begin Income+Extensions.swift
-5. Begin SavingsPlan+Extensions.swift
+1. Fix Manual Entry tab routing
+2. Align default category helper list with seeder list
+3. Begin Manual Entry form implementation
 
 ---
 
@@ -332,12 +332,10 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 **Focus**: Core Data Extensions - Part 2
 
 **Planned**:
-- [ ] Fix bugs from Day 2
-- [ ] Complete Account+Extensions.swift
-- [ ] Complete Income+Extensions.swift
-- [ ] Complete SavingsPlan+Extensions.swift
-- [ ] Test all extensions together
-- [ ] Validate seeded categories in production flows (pickers/forms)
+- [ ] Fix tab routing mismatch
+- [ ] Fix default category helper mismatch
+- [ ] Start ManualEntryView form state + layout
+- [ ] Add validation and save flow skeleton
 
 **Completed**:
 
@@ -351,23 +349,21 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### Active Issues
 
-1. **Transaction Validation Bug** - Priority: HIGH
-   - File: Transaction+Extensions.swift
-   - Lines: 181-194
-   - Issue: Validation uses `== nil` on Boolean `.isEmpty`
-   - Fix: Use guard-let pattern
-   - Status: Identified on Day 2, fix scheduled for Day 3
+1. **Manual Entry Tab Routing Mismatch** - Priority: HIGH
+   - File: SpendSight/RootTabView.swift
+   - Issue: "Manual Entry" tab presents `CategorySeederDebugView` instead of `ManualEntryView`
+   - Fix: Route tab to `ManualEntryView`; move debug view behind debug-only access
+   - Status: Identified on Day 2 static review
 
-2. **Category Sort Descriptor Issues** - Priority: MEDIUM
-   - File: Category+Extensions.swift
-   - Issues:
-     - Line 85: Typo `sortByNameDecending`
-     - Line 91: `sortByNameDescending` sorts by budget
-   - Fix: Rename and correct implementation
-   - Status: Identified on Day 2, fix scheduled for Day 3
+2. **Default Category Source Mismatch (9 vs 10)** - Priority: MEDIUM
+   - File: SpendSight/Core/Extensions/Category+Extensions.swift
+   - Issue: `createDefaultCategories(in:)` omits "Housing", but `CategorySeeder` seeds 10 categories
+   - Fix: Add "Housing" to helper or consolidate to one canonical category source
+   - Status: Identified on Day 2 static review
 
 ### Resolved Issues
-_None yet_
+- Transaction validation logic bug (resolved)
+- Category sort descriptor typo/mismatch (resolved)
 
 ---
 
