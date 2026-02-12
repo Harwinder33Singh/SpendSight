@@ -10,6 +10,8 @@ Thank you for your interest in contributing to SpendSight! This document provide
 - [Commit Guidelines](#commit-guidelines)
 - [Pull Request Process](#pull-request-process)
 
+**Last Updated**: February 12, 2026
+
 ## Code of Conduct
 
 This project follows standard professional conduct:
@@ -164,16 +166,7 @@ var isOverBudget: Bool {
 
 #### Core Data Best Practices
 
-**Always Use Managed Object Context**
-```swift
-// Good
-transaction.save(context: viewContext)
-
-// Avoid
-try! context.save() // Never force unwrap
-```
-
-**Use Guard Statements**
+**Always Use Guard Statements**
 ```swift
 // Good
 guard let category = transaction.category else {
@@ -182,7 +175,7 @@ guard let category = transaction.category else {
 
 // Avoid
 if transaction.category != nil {
-    let category = transaction.category!
+    let category = transaction.category! // Never force unwrap
 }
 ```
 
@@ -195,6 +188,19 @@ let amount = transaction.amount ?? 0.0
 guard let amount = transaction.amount else {
     print("Error: Transaction amount is nil")
     return
+}
+```
+
+**Validation Pattern**
+```swift
+// Good - use guard-let pattern
+guard let title = title?.trimmingCharacters(in: .whitespaces), !title.isEmpty else {
+    throw ValidationError.invalidTitle
+}
+
+// Avoid - backwards boolean logic
+guard ((title?.trimmingCharacters(in: .whitespaces).isEmpty) == nil) else {
+    throw ValidationError.invalidTitle  // This is wrong!
 }
 ```
 
@@ -232,11 +238,8 @@ func testTransactionValidation() {
     let transaction = Transaction()
     transaction.amount = -10.0
     
-    // When
-    let isValid = transaction.validate()
-    
-    // Then
-    XCTAssertFalse(isValid, "Negative amounts should be invalid")
+    // When/Then
+    XCTAssertThrowsError(try transaction.validate())
 }
 ```
 
@@ -275,12 +278,10 @@ Closes #42
 ```
 
 ```bash
-fix(transactions): resolve crash when deleting last transaction
+fix(validation): correct Transaction validation guard statements
 
-The app crashed when attempting to delete the final transaction
-in the list due to array index out of bounds error.
-
-Fixed by checking array count before accessing index.
+The validation was using backwards boolean logic with == nil on
+the isEmpty property. Changed to proper guard-let pattern.
 
 Fixes #67
 ```
@@ -360,18 +361,18 @@ Brief description of what this PR does
 - [ ] Refactoring
 
 ## Changes Made
-- Added manual entry form UI
-- Implemented form validation
-- Created category picker component
+- Fixed Transaction validation logic (lines 181-194)
+- Corrected Category sort descriptor naming
+- Added proper guard-let patterns
 
 ## Testing
 - [ ] Tested on iPhone simulator
-- [ ] Tested on actual device
-- [ ] Added unit tests
+- [ ] Tested validation with invalid data
 - [ ] Manual testing performed
 
-## Screenshots
-(If applicable)
+## Bugs Fixed
+- Transaction validation boolean logic
+- Category sort descriptor typo
 
 ## Checklist
 - [ ] Code follows project style guidelines
@@ -381,7 +382,7 @@ Brief description of what this PR does
 - [ ] Tested edge cases
 
 ## Related Issues
-Closes #42
+Fixes #67, Fixes #68
 ```
 
 4. **Request Review**

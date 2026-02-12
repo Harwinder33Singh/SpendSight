@@ -205,14 +205,15 @@ extension Transaction {
             throw ValidationError.invalidAmount("Amount cannot be zero")
         }
         
-        guard ((title?.trimmingCharacters(in: .whitespaces).isEmpty) == nil) else {
+        guard let title = title?.trimmingCharacters(in: .whitespaces), !title.isEmpty else {
             throw ValidationError.invalidTitle
         }
         
-        guard ((merchant?.trimmingCharacters(in: .whitespaces).isEmpty) == nil) else {
+        guard let merchant = merchant?.trimmingCharacters(in: .whitespaces), !merchant.isEmpty else {
             throw ValidationError.invalidMerchant
         }
-        guard ((paymentMethod?.trimmingCharacters(in: .whitespaces).isEmpty) == nil) else {
+        
+        guard let paymentMethod = paymentMethod?.trimmingCharacters(in: .whitespaces), !paymentMethod.isEmpty else {
             throw ValidationError.invalidPaymentMethod
         }
         guard date != nil else {

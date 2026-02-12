@@ -124,12 +124,12 @@ extension Category {
     }
     
     /// Sort by name (Z-A)
-    static var sortByNameDecending: NSSortDescriptor {
+    static var sortByNameDescending: NSSortDescriptor {
         NSSortDescriptor(keyPath: \Category.name, ascending: false)
     }
     
     /// Sort by monthly budget (highest first)
-    static var sortByNameDescending: NSSortDescriptor {
+    static var sortByNameDescendingMonthlyBudget: NSSortDescriptor {
         NSSortDescriptor(key: "monthlyBudget", ascending: false)
     }
     
@@ -164,8 +164,8 @@ extension Category {
     // MARK: - Helper Methods
     /// Calculate total spending in this category for a given date range
     /// - Parameters:
-    ///   - startDate: Start date of the range
-    ///   - endDate: End date of the range
+    /// - startDate: Start date of the range
+    /// - endDate: End date of the range
     /// - Returns: Total amount spent (positive number)
     
     func totalSpent(from startDate: Date, to endDate: Date) -> Double {

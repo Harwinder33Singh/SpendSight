@@ -20,21 +20,22 @@ SpendSight is a personal finance tracking app that makes it easy to:
 
 ## ✨ Features
 
-### Current (Phase 1)
+### Current (Phase 1) ✅
 - [x] Core Data model with 5 entities
 - [x] Tab-based navigation structure
 - [x] Persistence layer setup
 - [x] Project architecture established
+- [x] Core Data extensions (in progress - Day 2)
 
-### In Development (Phase 2)
-- [ ] Manual transaction entry with form validation (In progress)
-- [ ] Transaction list with filtering and search
-- [ ] Dashboard with spending analytics
-- [ ] Category management with icons and colors
-- [ ] Budget tracking with progress indicators
-- [ ] Settings and account management
+### In Development (Phase 2) 🚧
+- [ ] Manual transaction entry with form validation (Week 1)
+- [ ] Transaction list with filtering and search (Week 2)
+- [ ] Dashboard with spending analytics (Week 2)
+- [ ] Category management with icons and colors (Week 1-2)
+- [ ] Budget tracking with progress indicators (Week 3)
+- [ ] Settings and account management (Week 3)
 
-### Planned (Phase 3+)
+### Planned (Phase 3+) 📅
 - [ ] Receipt scanning with Vision framework
 - [ ] Bank integration via Plaid API
 - [ ] Recurring transaction automation
@@ -52,7 +53,13 @@ SpendSight/
 │   └── SpendSightApp.swift          # App entry point
 ├── Core/
 │   ├── CoreData+Save.swift          # Context extensions
-│   └── PersistenceController.swift  # Core Data stack
+│   ├── PersistenceController.swift  # Core Data stack
+│   └── Extensions/                  # Core Data entity extensions
+│       ├── Transaction+Extensions.swift
+│       ├── Category+Extensions.swift
+│       ├── Account+Extensions.swift
+│       ├── Income+Extensions.swift
+│       └── SavingsPlan+Extensions.swift
 ├── Features/
 │   ├── Budgets/
 │   │   └── BudgetsView.swift
@@ -134,7 +141,7 @@ open SpendSight.xcodeproj
 
 The app will automatically:
 - Initialize Core Data stack
-- Create default categories (once implemented)
+- Create default categories (implementation in progress)
 - Set up persistence layer
 
 ## 📖 Usage
@@ -160,24 +167,26 @@ The app will automatically:
 
 ## 🛠 Development
 
-### Current Sprint (Week 1)
+### Current Sprint (Week 1: Feb 11-17, 2026)
 **Goal**: Manual Entry & Core Data Extensions
 
-- [ ] Task 1: Create Core Data extensions (Days 1-2)
-  - Transaction+Extensions.swift
-  - Category+Extensions.swift
-  - Account+Extensions.swift
-  - Income+Extensions.swift
-  - SavingsPlan+Extensions.swift
+**Status**: Day 2 of 21 - 🚧 In Progress
 
-- [ ] Task 2: Default categories setup (Day 3)
-  - CategorySeeder.swift
-  - 10 default categories with icons
+- [ ] Task 1: Create Core Data extensions (Days 2-3)
+  - [ ] Transaction+Extensions.swift (In Progress)
+  - [ ] Category+Extensions.swift (In Progress)
+  - [ ] Account+Extensions.swift
+  - [ ] Income+Extensions.swift
+  - [ ] SavingsPlan+Extensions.swift
 
-- [ ] Task 3: Manual Entry form (Days 4-7)
-  - Complete form UI
-  - Validation logic
-  - Save functionality
+- [ ] Task 2: Default categories setup (Day 4 - Feb 14)
+  - [ ] CategorySeeder.swift
+  - [ ] 10 default categories with icons
+
+- [ ] Task 3: Manual Entry form (Days 5-7)
+  - [ ] Complete form UI
+  - [ ] Validation logic
+  - [ ] Save functionality
 
 **Milestone**: Users can add transactions manually
 
@@ -194,6 +203,7 @@ The app will automatically:
 - Use background contexts for heavy operations
 - Implement proper error handling
 - Test cascade delete rules
+- Use guard statements instead of force unwrapping
 
 #### SwiftUI Best Practices
 - Keep views small and composable
@@ -220,20 +230,23 @@ The app will automatically:
 
 ## 📝 Roadmap
 
-### Week 1: Foundation (Current)
-- [x] Project setup and architecture
-- [ ] Core Data extensions (Transaction & Category work underway)
-- [ ] Manual entry form (adds UI & validation once extensions stabilize)
+### Week 1: Foundation (Current - Days 1-7)
+- [x] Day 1: Project planning & documentation (Feb 11)
+- [ ] Days 2-3: Core Data extensions (Feb 12-13)
+- [ ] Day 4: Default categories seeding (Feb 14)
+- [ ] Days 5-7: Manual entry form (Feb 15-17)
 
-### Week 2: Core Features
+### Week 2: Core Features (Days 8-14)
 - [ ] Transactions list view
 - [ ] Dashboard with charts
 - [ ] Basic filtering
+- [ ] Search functionality
 
-### Week 3: Polish & Budget
+### Week 3: Polish & Budget (Days 15-21)
 - [ ] Budget management
 - [ ] Settings view
 - [ ] Data validation
+- [ ] Final testing
 
 ### Phase 2 (Future)
 - [ ] Advanced analytics
@@ -251,6 +264,8 @@ This is currently a personal project. If you'd like to contribute:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -259,14 +274,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Harwinder Singh**
 - Started: January 2, 2026
-- Status: Active Development
+- Status: Active Development (Day 2 of 21)
 
 ## 📞 Support
 
 For questions or issues:
 - Create an issue in the GitHub repository
-- Review `Progress Tracker.md` and `TODO.md` for the current sprint
-- Check `ChangeLog.md` for recent decisions or work items
+- Review [PROGRESS_TRACKER.md](PROGRESS_TRACKER.md) for current sprint
+- Check [TODO.md](TODO.md) for task details
+- See [CHANGELOG.md](CHANGELOG.md) for recent updates
 
 ## 🙏 Acknowledgments
 
@@ -278,11 +294,17 @@ For questions or issues:
 
 **Last Updated**: February 12, 2026
 
-**Current Phase**: Phase 2 - Core Functionality (Manual Entry in progress)
+**Current Phase**: Phase 2 - Core Functionality
 
-**Next Milestone**: Complete transaction entry experience (Week 1)
+**Current Task**: Core Data extensions (Transaction & Category)
 
-**Target MVP Date**: March 4, 2026 (3 weeks from start of development)
+**Sprint**: Week 1, Day 2 of 21
+
+**Next Milestone**: Complete Core Data extensions by Feb 13
+
+**Target MVP Date**: March 4, 2026
+
+**Latest Update**: Began implementing Transaction and Category Core Data extensions with proper validation, computed properties, and fetch request builders.
 
 ---
 

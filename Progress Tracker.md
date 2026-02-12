@@ -2,7 +2,8 @@
 
 **Project Start**: January 2, 2026  
 **Target MVP**: March 4, 2026  
-**Last Updated**: February 12, 2026
+**Last Updated**: February 12, 2026  
+**Current Day**: 2 of 21
 
 ---
 
@@ -10,11 +11,11 @@
 
 ```
 Phase 1: Foundation          [████████████████████] 100% ✅
-Phase 2: Core Functionality  [░░░░░░░░░░░░░░░░░░░░]   0% 🚧
+Phase 2: Core Functionality  [██░░░░░░░░░░░░░░░░░░]  10% 🚧
 Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░░░░░]   0% 📅
 ```
 
-**Overall Project**: 30% Complete
+**Overall Project**: 33% Complete
 
 ---
 
@@ -22,19 +23,19 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### Week 1: Foundation & Manual Entry (Feb 11-17, 2026)
 **Goal**: Manual Entry Form Complete  
-**Status**: 🚧 In Progress
+**Status**: 🚧 In Progress - Day 2 of 7
 
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
-| 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO |
-| 2 | Feb 12 | Core Data extensions (Transaction, Category) | 🚧 | 4 | Building Transaction & Category Core Data extensions |
-| 3 | Feb 13 | Core Data extensions (Account, Income, SavingsPlan) | 📅 | - | - |
-| 4 | Feb 14 | CategorySeeder + Default categories | 📅 | - | - |
-| 5 | Feb 15 | Manual Entry form UI | 📅 | - | - |
-| 6 | Feb 16 | Manual Entry validation & save | 📅 | - | - |
-| 7 | Feb 17 | Manual Entry testing & polish | 📅 | - | - |
+| 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO, CHANGELOG, CONTRIBUTING |
+| 2 | Feb 12 | Core Data extensions (Transaction, Category) | 🚧 | 4 | Building extensions, identified validation bugs |
+| 3 | Feb 13 | Core Data extensions (Account, Income, SavingsPlan) | 📅 | - | Complete remaining 3 extensions |
+| 4 | Feb 14 | CategorySeeder + Default categories | 📅 | - | Create seeder, test default categories |
+| 5 | Feb 15 | Manual Entry form UI | 📅 | - | Build form layout and components |
+| 6 | Feb 16 | Manual Entry validation & save | 📅 | - | Implement validation and Core Data save |
+| 7 | Feb 17 | Manual Entry testing & polish | 📅 | - | Test thoroughly, add polish and feedback |
 
-**Week 1 Progress**: █░░░░░░░ 12.5%
+**Week 1 Progress**: ███░░░░░ 25%
 
 ---
 
@@ -44,31 +45,32 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
-| 8 | Feb 18 | Transactions list view - basic | 📅 | - | - |
-| 9 | Feb 19 | Transaction row design & swipe actions | 📅 | - | - |
-| 10 | Feb 20 | Filtering & search functionality | 📅 | - | - |
-| 11 | Feb 21 | Transactions testing | 📅 | - | - |
-| 12 | Feb 22 | Dashboard layout & summary cards | 📅 | - | - |
-| 13 | Feb 23 | Dashboard charts (Swift Charts) | 📅 | - | - |
-| 14 | Feb 24 | Dashboard testing & polish | 📅 | - | - |
+| 8 | Feb 18 | Transactions list view - basic | 📅 | - | Fetch and display transactions |
+| 9 | Feb 19 | Transaction row design & swipe actions | 📅 | - | Create row component, delete/edit |
+| 10 | Feb 20 | Filtering & search functionality | 📅 | - | Add filters and search bar |
+| 11 | Feb 21 | Transactions testing | 📅 | - | Test with various data sets |
+| 12 | Feb 22 | Dashboard layout & summary cards | 📅 | - | Build dashboard structure |
+| 13 | Feb 23 | Dashboard charts (Swift Charts) | 📅 | - | Integrate charts, visualizations |
+| 14 | Feb 24 | Dashboard testing & polish | 📅 | - | Final polish and performance |
 
 **Week 2 Progress**: ░░░░░░░░ 0%
 
 ---
 
-### Week 3: Budgets & Settings (Feb 25 - Mar 3, 2026)
+### Week 3: Budgets & Settings (Feb 25 - Mar 4, 2026)
 **Goal**: Complete MVP  
 **Status**: 📅 Not Started
 
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
-| 15 | Feb 25 | Budget overview screen | 📅 | - | - |
-| 16 | Feb 26 | Budget setting UI per category | 📅 | - | - |
-| 17 | Feb 27 | Budget progress & notifications | 📅 | - | - |
-| 18 | Feb 28 | Budget testing | 📅 | - | - |
-| 19 | Mar 1 | Settings screen & account management | 📅 | - | - |
-| 20 | Mar 2 | Settings completion | 📅 | - | - |
-| 21 | Mar 3 | Final testing & bug fixes | 📅 | - | - |
+| 15 | Feb 25 | Budget overview screen | 📅 | - | List categories with budgets |
+| 16 | Feb 26 | Budget setting UI per category | 📅 | - | Edit budget amounts |
+| 17 | Feb 27 | Budget progress & notifications | 📅 | - | Progress bars and alerts |
+| 18 | Feb 28 | Budget testing | 📅 | - | Comprehensive budget testing |
+| 19 | Mar 1 | Settings screen & account management | 📅 | - | Build settings UI |
+| 20 | Mar 2 | Settings completion | 📅 | - | Export, preferences, polish |
+| 21 | Mar 3 | Final testing & bug fixes | 📅 | - | End-to-end testing |
+| - | Mar 4 | **MVP LAUNCH** 🎉 | 📅 | - | Celebrate! |
 
 **Week 3 Progress**: ░░░░░░░░ 0%
 
@@ -78,37 +80,47 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### 🔴 Critical Path Tasks
 
-#### Task 1: Core Data Extensions ⏳
-**Duration**: 2-3 days | **Status**: In Progress | **Priority**: HIGHEST
+#### Task 1: Core Data Extensions 🚧
+**Duration**: 2 days | **Status**: In Progress (Day 1 of 2) | **Priority**: HIGHEST
 
-- [ ] Transaction+Extensions.swift
-  - [ ] Convenience initializer
-  - [ ] Display properties
-  - [ ] Fetch requests
-  - [ ] Validation methods
-- [ ] Category+Extensions.swift
-  - [ ] Convenience initializer
-  - [ ] Color conversion
-  - [ ] Fetch requests
-- [ ] Account+Extensions.swift
+- [ ] Transaction+Extensions.swift (75% complete)
+  - [x] Convenience initializer
+  - [x] Display properties
+  - [x] Fetch requests
+  - [ ] Fix validation methods (bugs identified)
+  - [ ] Testing
+- [ ] Category+Extensions.swift (75% complete)
+  - [x] Convenience initializer
+  - [x] Color conversion
+  - [x] Fetch requests
+  - [ ] Fix sort descriptor issues (bugs identified)
+  - [ ] Testing
+- [ ] Account+Extensions.swift (0% complete)
   - [ ] Convenience initializer
   - [ ] Display properties
   - [ ] Validation
-- [ ] Income+Extensions.swift
+- [ ] Income+Extensions.swift (0% complete)
   - [ ] Convenience initializer
   - [ ] Display properties
   - [ ] Fetch requests
-- [ ] SavingsPlan+Extensions.swift
+- [ ] SavingsPlan+Extensions.swift (0% complete)
   - [ ] Convenience initializer
   - [ ] Progress calculations
   - [ ] Fetch requests
 
-**Progress**: ░░░░░░░░░░ 0/5 files (0%)
-Transactions and Category extensions are in active development while the remaining entities await completion.
+**Progress**: ████░░░░░░ 2/5 files (40%)
+
+**Bugs Found**:
+1. ⚠️ Transaction validation logic (lines 181-194) - backwards boolean logic
+2. ⚠️ Category sort descriptor typo and mismatch
+
+**Next Steps**:
+- Fix validation bugs today
+- Complete Account, Income, SavingsPlan tomorrow
 
 ---
 
-#### Task 2: Default Categories ⏳
+#### Task 2: Default Categories 📅
 **Duration**: 1 day | **Status**: Not Started | **Priority**: HIGH
 
 - [ ] CategorySeeder.swift created
@@ -118,12 +130,13 @@ Transactions and Category extensions are in active development while the remaini
 - [ ] Testing completed
 
 **Progress**: ░░░░░░░░░░ 0/5 steps (0%)
-Seeding is scheduled for Feb 14 after core category metadata is locked in.
+
+**Scheduled**: Feb 14 (Day 4)
 
 ---
 
-#### Task 3: Manual Entry Form ⏳
-**Duration**: 4-5 days | **Status**: Not Started | **Priority**: CRITICAL
+#### Task 3: Manual Entry Form 📅
+**Duration**: 3 days | **Status**: Not Started | **Priority**: CRITICAL
 
 - [ ] Form state management
 - [ ] Amount input field
@@ -139,12 +152,13 @@ Seeding is scheduled for Feb 14 after core category metadata is locked in.
 - [ ] Form reset functionality
 
 **Progress**: ░░░░░░░░░░░░ 0/12 items (0%)
-Manual entry wireframes, validation targets, and field requirements are drafted ahead of UI build.
+
+**Scheduled**: Feb 15-17 (Days 5-7)
 
 ---
 
-#### Task 4: Transactions List ⏸️
-**Duration**: 3-4 days | **Status**: Blocked by Task 3
+#### Task 4: Transactions List 📅
+**Duration**: 4 days | **Status**: Blocked by Task 3
 
 - [ ] Fetch transactions
 - [ ] Group by date
@@ -158,10 +172,12 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 
 **Progress**: ░░░░░░░░░ 0/9 items (0%)
 
+**Scheduled**: Feb 18-21 (Days 8-11)
+
 ---
 
-#### Task 5: Dashboard View ⏸️
-**Duration**: 4-5 days | **Status**: Blocked by Task 4
+#### Task 5: Dashboard View 📅
+**Duration**: 3 days | **Status**: Blocked by Task 4
 
 - [ ] Summary cards
 - [ ] "This Month" total
@@ -174,33 +190,37 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 
 **Progress**: ░░░░░░░░ 0/8 items (0%)
 
+**Scheduled**: Feb 22-24 (Days 12-14)
+
 ---
 
 ### 🟡 Secondary Tasks
 
-#### Task 6: Budget Management ⏸️
-**Status**: Not Started | **Progress**: 0%
+#### Task 6: Budget Management 📅
+**Status**: Not Started | **Progress**: 0%  
+**Scheduled**: Feb 25-28 (Days 15-18)
 
-#### Task 7: Settings View ⏸️
-**Status**: Not Started | **Progress**: 0%
+#### Task 7: Settings View 📅
+**Status**: Not Started | **Progress**: 0%  
+**Scheduled**: Mar 1-2 (Days 19-20)
 
 ---
 
 ## 📈 Velocity & Estimates
 
 ### Completed Work
-- **Week 0**: Project setup & architecture (Jan 2-14)
-- **Days completed so far**: 1/21
+- **Week 0**: Project setup & architecture (Jan 2-14) ✅
+- **Days completed**: 2/21 (9.5%)
 
 ### Remaining Work
-- **Critical path tasks**: 5 remaining
-- **Estimated days**: 20 remaining
+- **Critical path tasks**: 5 tasks
+- **Estimated days**: 19 remaining
 - **Buffer days**: 2 days built in
 
 ### Risk Assessment
 - ✅ **On Track**: Currently on schedule
-- ⚠️ **At Risk**: None yet
-- 🔴 **Blocked**: None yet
+- ⚠️ **Minor Issues**: 2 bugs identified but fixable
+- 🔴 **Blockers**: None
 
 ---
 
@@ -209,13 +229,13 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 | Milestone | Target Date | Status | Completion |
 |-----------|-------------|--------|------------|
 | Project Plan Complete | Feb 11 | ✅ | 100% |
-| Core Data Extensions | Feb 13 | ⏳ | 0% |
+| Core Data Extensions | Feb 13 | 🚧 | 40% |
 | Manual Entry Working | Feb 17 | 📅 | 0% |
 | Transactions List | Feb 21 | 📅 | 0% |
 | Dashboard Analytics | Feb 24 | 📅 | 0% |
 | Budget Management | Feb 28 | 📅 | 0% |
 | Settings Complete | Mar 2 | 📅 | 0% |
-| **MVP Launch** | **Mar 4** | 📅 | **25%** |
+| **MVP Launch** | **Mar 4** | 📅 | **30%** |
 
 ---
 
@@ -224,15 +244,54 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 - ✅ **Architect**: Designed comprehensive data model
 - ✅ **Planner**: Created detailed 3-week development plan
 - ✅ **Documenter**: Wrote complete project documentation
+- ✅ **Debugger**: Identified validation bugs early
 
 ### Next Achievement
-- 🎯 **Data Master**: Complete all Core Data extensions
+- 🎯 **Data Master**: Complete all Core Data extensions (40% done)
 
 ---
 
 ## 📝 Daily Log
 
-### 2026-02-11 (Day 1)
+### 2026-02-12 (Day 2) 🚧
+**Focus**: Core Data Extensions - Part 1
+
+**Completed**:
+- ✅ Started Transaction+Extensions.swift
+  - Created convenience initializer
+  - Added display properties
+  - Implemented fetch request builders
+  - Added validation methods (needs bug fixes)
+- ✅ Started Category+Extensions.swift
+  - Created convenience initializer
+  - Added color conversion helpers
+  - Implemented fetch requests
+  - Added sort descriptors (needs fixes)
+
+**Bugs Identified**:
+1. ⚠️ Transaction validation logic uses backwards boolean check
+2. ⚠️ Category sort descriptors have typo and mismatch
+
+**Blockers**: None
+
+**Hours Worked**: 4 hours
+
+**Notes**: 
+- Good progress on extensions, but found validation logic bug
+- Need to fix validation to use guard-let pattern
+- Category sort descriptors need cleanup
+- Both bugs are minor and easily fixable
+
+**Tomorrow's Plan**:
+1. Fix validation bugs in Transaction+Extensions
+2. Fix sort descriptor issues in Category+Extensions
+3. Complete Account+Extensions.swift
+4. Begin Income+Extensions.swift
+5. Begin SavingsPlan+Extensions.swift
+
+---
+
+### 2026-02-11 (Day 1) ✅
 **Focus**: Project Planning & Documentation
 
 **Completed**:
@@ -245,40 +304,30 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 
 **Blockers**: None
 
-**Notes**: Solid foundation established. Ready to start coding tomorrow.
+**Hours Worked**: 3 hours
 
-**Tomorrow's Plan**:
+**Notes**: 
+- Solid foundation established
+- Clear roadmap for 3 weeks
+- Ready to start coding
+
+**Next Day's Plan**:
 1. Create Core Data extensions folder
 2. Start Transaction+Extensions.swift
-3. Write and test display properties
+3. Start Category+Extensions.swift
+4. Write and test display properties
 
 ---
 
-### 2026-02-12 (Day 2)
-**Focus**: Core Data Extensions - Part 1
+### 2026-02-13 (Day 3) 📅
+**Focus**: Core Data Extensions - Part 2
 
 **Planned**:
-- [ ] Transaction+Extensions.swift
-- [ ] Category+Extensions.swift
-- [ ] Begin Account+Extensions.swift
-
-**Completed**:
-- 
-
-**Blockers**:
-
-**Notes**:
-
----
-
-### 2026-02-13 (Day 3)
-**Focus**: Core Data Extensions - Part 2 + CategorySeeder
-
-**Planned**:
+- [ ] Fix bugs from Day 2
 - [ ] Complete Account+Extensions.swift
-- [ ] Income+Extensions.swift
-- [ ] SavingsPlan+Extensions.swift
-- [ ] Start CategorySeeder.swift
+- [ ] Complete Income+Extensions.swift
+- [ ] Complete SavingsPlan+Extensions.swift
+- [ ] Test all extensions together
 
 **Completed**:
 
@@ -291,7 +340,21 @@ Manual entry wireframes, validation targets, and field requirements are drafted 
 ## 🐛 Bugs & Issues
 
 ### Active Issues
-_None yet_
+
+1. **Transaction Validation Bug** - Priority: HIGH
+   - File: Transaction+Extensions.swift
+   - Lines: 181-194
+   - Issue: Validation uses `== nil` on Boolean `.isEmpty`
+   - Fix: Use guard-let pattern
+   - Status: Identified on Day 2, fix scheduled for Day 3
+
+2. **Category Sort Descriptor Issues** - Priority: MEDIUM
+   - File: Category+Extensions.swift
+   - Issues:
+     - Line 85: Typo `sortByNameDecending`
+     - Line 91: `sortByNameDescending` sorts by budget
+   - Fix: Rename and correct implementation
+   - Status: Identified on Day 2, fix scheduled for Day 3
 
 ### Resolved Issues
 _None yet_
@@ -301,7 +364,9 @@ _None yet_
 ## 💡 Ideas & Improvements
 
 ### Discovered During Development
-_Track any new ideas or improvements discovered while coding_
+- Consider creating reusable validation helper functions
+- Could extract formatting logic into separate utility class
+- Might want to add more comprehensive Core Data fetch request helpers
 
 ---
 
@@ -309,25 +374,20 @@ _Track any new ideas or improvements discovered while coding_
 
 | Week | Planned Hours | Actual Hours | Variance |
 |------|---------------|--------------|----------|
-| Week 1 | 30 | 3 | -27 |
+| Week 1 | 30 | 7 | -23 |
 | Week 2 | 30 | 0 | -30 |
 | Week 3 | 30 | 0 | -30 |
-| **Total** | **90** | **3** | **-87** |
+| **Total** | **90** | **7** | **-83** |
 
-**Average daily hours**: 3-4 hours/day planned
+**Average daily hours**: 3.5 hours/day actual (planned 4-5)
 
 ---
 
 ## 🎓 Lessons Learned
 
-### Week 1
-_Update at end of week_
-
-### Week 2
-_Update at end of week_
-
-### Week 3
-_Update at end of week_
+### Week 1 (In Progress)
+- **Day 1**: Good documentation saves time later
+- **Day 2**: Finding bugs early is better than later - validation logic issues identified before they caused problems
 
 ---
 
@@ -336,8 +396,8 @@ _Update at end of week_
 ```
 Remaining Tasks
 
-Day  1: ████████████████████░ (20/21)
-Day  2: ████████████████████░ (19/21)
+Day  1: ████████████████████░ (20/21) ✅
+Day  2: ████████████████████░ (19/21) 🚧
 Day  3: ███████████████████░░ (18/21)
 Day  4: ██████████████████░░░ (17/21)
 Day  5: █████████████████░░░░ (16/21)
@@ -359,6 +419,10 @@ Day 20: ██░░░░░░░░░░░░░░░░░░░ (1/21)
 Day 21: █░░░░░░░░░░░░░░░░░░░░ (0/21) 🎉
 ```
 
+**Current Velocity**: 1 task/day (on track)
+
 ---
 
 **Remember**: Update this tracker daily to stay on track and motivated! 🚀
+
+**Next Update**: End of Day 2 (Feb 12)
