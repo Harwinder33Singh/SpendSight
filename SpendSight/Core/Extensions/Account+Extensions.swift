@@ -92,7 +92,7 @@ extension Account {
     
     /// Fetch all accounts sorted by name
     static func fetchAll() -> NSFetchRequest<Account> {
-        return fetchRequest()
+        return fetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Account.name, ascending: true)])
     }
     
     /// Fetch accounts by type (e.g., "Checking", "Credit Card")

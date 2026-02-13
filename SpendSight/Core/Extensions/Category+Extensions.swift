@@ -98,7 +98,7 @@ extension Category {
     
     /// Fetch all categories sorted by name
     static func fetchAll() -> NSFetchRequest<Category> {
-        return fetchRequest()
+        return fetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)])
     }
     
     /// Fetch categories with budgets
