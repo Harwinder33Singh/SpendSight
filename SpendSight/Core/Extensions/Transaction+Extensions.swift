@@ -10,7 +10,7 @@ import CoreData
 
 extension Transaction {
     
-    // Mark: - Convinience Initializer
+    // MARK: - Convenience Initializer
     /// Convenience initializer for creating a new Transaction with all required parameters
     /// - Parameters:
     ///   - context: The NSManagedObjectContext to insert the transaction into

@@ -458,20 +458,13 @@ SpendSight/Shared/Components/
 ## 🐛 Known Issues / Technical Debt
 
 ### Active Issues
-1. ⚠️ **Transaction+Extensions.swift** (Line 181-194): Validation logic is backwards
-   - Using `== nil` on Bool property `.isEmpty`
-   - Should use guard-let pattern
-   - Affects: title, merchant, paymentMethod validation
-
-2. ⚠️ **Category+Extensions.swift** (Line 85): Typo in sort descriptor name
-   - `sortByNameDecending` should be `sortByNameDescending`
-
-3. ⚠️ **Category+Extensions.swift** (Line 91): Wrong sort implementation
-   - `sortByNameDescending` actually sorts by budget, not name
-   - Should be `sortByBudgetDescending`
+_None._
 
 ### Resolved Issues
-_None yet_
+- Transaction validation logic (guard-let pattern in place)
+- Category sort: renamed `sortByNameDescendingMonthlyBudget` → `sortByBudgetDescending`
+- Category default list: added "Housing" to `createDefaultCategories`
+- Comment typos: `Mark` → `MARK`, `Convinience` → `Convenience` in extensions
 
 ---
 

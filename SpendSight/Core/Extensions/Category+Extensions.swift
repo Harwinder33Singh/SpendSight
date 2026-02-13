@@ -11,7 +11,7 @@ import SwiftUI
 
 extension Category {
     
-    // Mark: - Convinience Initializer
+    // MARK: - Convenience Initializer
     /// Convenience initializer for creating a new Category with all required parameters
     /// - Parameters:
     ///   - context: The NSManagedObjectContext to insert the category into
@@ -129,7 +129,7 @@ extension Category {
     }
     
     /// Sort by monthly budget (highest first)
-    static var sortByNameDescendingMonthlyBudget: NSSortDescriptor {
+    static var sortByBudgetDescending: NSSortDescriptor {
         NSSortDescriptor(key: "monthlyBudget", ascending: false)
     }
     
@@ -240,7 +240,7 @@ enum CategoryValidationError: LocalizedError {
     }
 }
 
-// Mark: - Identifiable Conformance (for SwiftUI)
+// MARK: - Identifiable Conformance (for SwiftUI)
 
 // extension Category: Identifiable {
 //     // Core Data objects already have an objectID, but we're using our UUID
@@ -305,7 +305,8 @@ extension Category {
             ("Utilities", "#795548", "bolt.fill", 300),
             ("Healthcare", "#F44336", "cross.case.fill", nil),
             ("Income", "#8BC34A", "dollarsign.circle.fill", nil),
-            ("Other", "#9E9E9E", "questionmark.circle.fill", nil)
+            ("Other", "#9E9E9E", "questionmark.circle.fill", nil),
+            ("Housing", "#607D8B", "house.fill", 1500)
         ]
         return defaults.map { item in
             Category(
