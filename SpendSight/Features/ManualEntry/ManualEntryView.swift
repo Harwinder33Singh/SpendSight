@@ -5,6 +5,14 @@
 //  Created by Harwinder Singh on 1/14/26.
 //
 
+//
+//  ManualEntryView.swift
+//  SpendSight
+//
+//  Created by Harwinder Singh on 1/14/26.
+//  FIXED: Payment method order, conditional display, removed Done button
+//
+
 import SwiftUI
 import CoreData
 
@@ -45,29 +53,39 @@ struct ManualEntryView: View {
     @FetchRequest(fetchRequest: Account.fetchAll())
     private var accounts: FetchedResults<Account>
     
+    // MARK: - Computed Properties
+    
+    /// Check if selected category is Income (hide payment method for income)
+    private var isIncomeCategory: Bool {
+        guard let categoryName = selectedCategory?.name?.lowercased() else { return false }
+        return categoryName == "income"
+    }
+    
     // MARK: - Body
     var body: some View {
         NavigationStack {
-            Form {
-                amountSection
-                dateSection
-                categorySection
-                accountSection
-                detailsSection
-                paymentMethodSection
-                notesSection
-                recurringSection
-                actionButtons
-            }
-            .navigationTitle("Manual Entry")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    Button("Done") {
-                        focusedField = nil
+            ScrollView {
+                VStack(spacing: 0) {
+                    amountSection
+                    dateSection
+                    categorySection
+                    
+                    // Show payment method right after category (but only for expenses)
+                    if !isIncomeCategory {
+                        paymentMethodSection
                     }
+                    
+                    accountSection
+                    detailsSection
+                    notesSection
+                    recurringSection
+                    actionButtons
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
+            .navigationTitle("Manual Entry")
+            .navigationBarTitleDisplayMode(.inline)
+            // REMOVED: Done button from toolbar
             .overlay(successOverlay)
             .alert("Validation Error", isPresented: $showValidationError) {
                 Button("OK", role: .cancel) { }
@@ -76,7 +94,10 @@ struct ManualEntryView: View {
             }
             .onAppear {
                 loadSavedPreferences()
-                focusedField = .amount
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                focusedField = nil
             }
         }
     }
@@ -84,45 +105,100 @@ struct ManualEntryView: View {
     // MARK: - Form Sections
     
     private var amountSection: some View {
-        Section("Amount *") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Amount *")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top)
+            
             CurrencyTextField(
                 title: "Enter amount",
                 text: $amountString,
                 focusedField: $focusedField
             )
+            .padding(.horizontal)
+            .padding(.bottom, 8)
         }
+        .background(Color(.systemBackground))
     }
     
     private var dateSection: some View {
-        Section("Date") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Date")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
             DatePicker(
                 "Transaction Date",
                 selection: $selectedDate,
                 in: ...Date(),
                 displayedComponents: [.date]
             )
+            .padding(.horizontal)
+            .padding(.bottom, 8)
         }
+        .background(Color(.systemBackground))
     }
     
     private var categorySection: some View {
-        Section("Category *") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Category *")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
             if categories.isEmpty {
                 Text("No categories available. Please add categories first.")
                     .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
             } else {
                 CategoryPickerView(
                     categories: categories,
                     selected: $selectedCategory
                 )
+                .padding(.horizontal)
+                .padding(.bottom, 8)
             }
         }
+        .background(Color(.systemBackground))
+    }
+    
+    private var paymentMethodSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Payment Method")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
+            Picker("Method", selection: $paymentMethod) {
+                ForEach(paymentMethods, id: \.self) { method in
+                    Text(method).tag(method)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+            .onChange(of: paymentMethod) { _, newValue in
+                UserDefaults.standard.set(newValue, forKey: lastPaymentMethodKey)
+            }
+        }
+        .background(Color(.systemBackground))
     }
     
     private var accountSection: some View {
-        Section("Account *") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Account *")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
             if accounts.isEmpty {
                 Text("No accounts available. Please add an account first.")
                     .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
             } else {
                 AccountPickerView(
                     accounts: accounts,
@@ -135,45 +211,60 @@ struct ManualEntryView: View {
                         )
                     }
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
     }
     
     private var detailsSection: some View {
-        Section("Details") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Details")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
             TextField("Merchant (optional)", text: $merchant)
+                .textFieldStyle(.roundedBorder)
                 .textInputAutocapitalization(.words)
                 .focused($focusedField, equals: .merchant)
+                .padding(.horizontal)
             
             TextField("Title (optional)", text: $titleText)
+                .textFieldStyle(.roundedBorder)
                 .textInputAutocapitalization(.words)
                 .focused($focusedField, equals: .title)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
         }
-    }
-    
-    private var paymentMethodSection: some View {
-        Section("Payment Method") {
-            Picker("Method", selection: $paymentMethod) {
-                ForEach(paymentMethods, id: \.self) { method in
-                    Text(method).tag(method)
-                }
-            }
-            .onChange(of: paymentMethod) { _, newValue in
-                UserDefaults.standard.set(newValue, forKey: lastPaymentMethodKey)
-            }
-        }
+        .background(Color(.systemBackground))
     }
     
     private var notesSection: some View {
-        Section("Notes") {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Notes")
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 16)
+            
             TextEditor(text: $notes)
-                .frame(minHeight: 80)
+                .frame(minHeight: 100)
+                .padding(8)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                )
                 .focused($focusedField, equals: .notes)
                 .onChange(of: notes) { _, newValue in
                     if newValue.count > 200 {
                         notes = String(newValue.prefix(200))
                     }
                 }
+                .padding(.horizontal)
             
             HStack {
                 Spacer()
@@ -181,22 +272,32 @@ struct ManualEntryView: View {
                     .font(.caption)
                     .foregroundStyle(notes.count > 180 ? .orange : .secondary)
             }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
         }
+        .background(Color(.systemBackground))
     }
     
     private var recurringSection: some View {
-        Section {
+        VStack(alignment: .leading, spacing: 8) {
             Toggle("Recurring Transaction", isOn: $isRecurring)
-        } footer: {
+                .padding(.horizontal)
+                .padding(.vertical, 12)
+            
             if isRecurring {
                 Text("Recurring frequency settings will be available in a future update.")
                     .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
             }
         }
+        .background(Color(.systemBackground))
+        .padding(.top, 16)
     }
     
     private var actionButtons: some View {
-        Section {
+        VStack(spacing: 12) {
             Button {
                 saveTransaction()
             } label: {
@@ -205,14 +306,18 @@ struct ManualEntryView: View {
                     if isSaving {
                         ProgressView()
                             .progressViewStyle(.circular)
+                            .tint(.white)
                     } else {
                         Text("Save Transaction")
                             .fontWeight(.semibold)
                     }
                     Spacer()
                 }
+                .padding()
+                .background(Color.accentColor)
+                .foregroundColor(.white)
+                .cornerRadius(10)
             }
-            .buttonStyle(.borderedProminent)
             .disabled(isSaving)
             
             Button(role: .destructive) {
@@ -223,6 +328,10 @@ struct ManualEntryView: View {
                     Text("Reset Form")
                     Spacer()
                 }
+                .padding()
+                .background(Color(.systemGray6))
+                .foregroundColor(.red)
+                .cornerRadius(10)
             }
             .disabled(isSaving)
             .confirmationDialog("Clear all fields?", isPresented: $showResetConfirmation) {
@@ -234,6 +343,8 @@ struct ManualEntryView: View {
                 Text("This will clear all entered information.")
             }
         }
+        .padding()
+        .padding(.bottom, 32)
     }
     
     // MARK: - Success Overlay
@@ -365,6 +476,9 @@ struct ManualEntryView: View {
             finalTitle = isIncome ? "Income" : "Expense"
         }
         
+        // Determine payment method (use "N/A" for income transactions)
+        let finalPaymentMethod = isIncome ? "N/A" : paymentMethod
+        
         // Create transaction
         let transaction = Transaction(
             context: context,
@@ -373,7 +487,7 @@ struct ManualEntryView: View {
             merchant: merchant.isEmpty ? finalTitle : merchant.trimmingCharacters(in: .whitespaces),
             date: selectedDate,
             notes: notes.isEmpty ? nil : notes,
-            paymentMethod: paymentMethod,
+            paymentMethod: finalPaymentMethod,
             isRecurring: isRecurring,
             category: category,
             account: account
@@ -382,6 +496,13 @@ struct ManualEntryView: View {
         // Save to Core Data
         do {
             try context.save()
+            
+            print("✅ Transaction saved!")
+            print("   Amount: \(signedAmount)")
+            print("   Title: \(finalTitle)")
+            print("   Category: \(category.name ?? "?")")
+            print("   Payment Method: \(finalPaymentMethod)")
+            print("   ID: \(transaction.id?.uuidString ?? "?")")
             
             // Success feedback
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -423,10 +544,8 @@ struct ManualEntryView: View {
         // Restore saved preferences
         loadSavedPreferences()
         
-        // Refocus on amount
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            focusedField = .amount
-        }
+        // Don't auto-focus after reset
+        focusedField = nil
     }
 }
 
@@ -438,3 +557,4 @@ struct ManualEntryView: View {
 //            .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
 //    }
 //}
+//

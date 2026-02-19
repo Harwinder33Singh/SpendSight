@@ -22,6 +22,7 @@ class CategorySeeder {
     ("Shopping", "#E91E63", "bag.fill", 200),
     ("Utilities", "#795548", "bolt.fill", 300),
     ("Healthcare", "#F44336", "cross.case.fill", nil),
+    ("Credit Card Payment", "#FF5722", "creditcard.and.123", nil),
     ("Income", "#8BC34A", "dollarsign.circle.fill", nil),
     ("Other", "#9E9E9E", "questionmark.circle.fill", nil),
     ("Housing", "#607D8B", "house.fill", 1500)]
@@ -73,10 +74,10 @@ class CategorySeeder {
         UserDefaults.standard.bool(forKey: hasSeededKey)
     }
     
-    /// Mark categories as seeded in UserDefaults
-    private static func markAsSeeded() {
-        UserDefaults.standard.set(true, forKey: hasSeededKey)
-    }
+//    /// Mark categories as seeded in UserDefaults
+//    private static func markAsSeeded() {
+//        UserDefaults.standard.set(true, forKey: hasSeededKey)
+//    }
     
     /// Reset seeding flag (useful for testing)
     static func resetSeedingFlag() {

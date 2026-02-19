@@ -22,7 +22,7 @@ struct RootTabView: View {
                 .tabItem {
                     Label("Transactions", systemImage: "list.bullet.rectangle")
                 }
-            BudgetsView()
+            DataDebugView()
                 .tabItem {
                     Label("Budget", systemImage: "target")
                 }
