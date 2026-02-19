@@ -2,8 +2,8 @@
 
 **Project Start**: January 2, 2026  
 **Target MVP**: March 4, 2026  
-**Last Updated**: February 12, 2026  
-**Current Day**: 2 of 21
+**Last Updated**: February 18, 2026  
+**Current Day**: 8 of 21
 
 ---
 
@@ -11,11 +11,11 @@
 
 ```
 Phase 1: Foundation          [████████████████████] 100% ✅
-Phase 2: Core Functionality  [█████░░░░░░░░░░░░░░░]  25% 🚧
+Phase 2: Core Functionality  [█████████░░░░░░░░░░░]  45% 🚧
 Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░░░░░]   0% 📅
 ```
 
-**Overall Project**: 40% Complete
+**Overall Project**: 55% Complete
 
 ---
 
@@ -23,29 +23,27 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ### Week 1: Foundation & Manual Entry (Feb 11-17, 2026)
 **Goal**: Manual Entry Form Complete  
-**Status**: 🚧 In Progress - Day 2 of 7
+**Status**: ✅ Complete (extended into Week 2)
 
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
 | 1 | Feb 11 | Project planning & documentation | ✅ | 3 | Created plan, README, TODO, CHANGELOG, CONTRIBUTING |
 | 2 | Feb 12 | Core Data extensions + category seeding integration | ✅ | 5 | Completed all 5 extension files, seeder integration, debug tools |
-| 3 | Feb 13 | Core Data follow-ups + Manual Entry kickoff | 📅 | - | Fix routing/helper issues, start ManualEntryView implementation |
+| 3 | Feb 13 | Core Data follow-ups + Manual Entry kickoff | ✅ | - | Fix routing/helper issues, start ManualEntryView |
 | 4 | Feb 14 | CategorySeeder + Default categories | ✅ | - | Completed early on Feb 12 |
-| 5 | Feb 15 | Manual Entry form UI | 📅 | - | Build form layout and components |
-| 6 | Feb 16 | Manual Entry validation & save | 📅 | - | Implement validation and Core Data save |
-| 7 | Feb 17 | Manual Entry testing & polish | 📅 | - | Test thoroughly, add polish and feedback |
+| 5-7 | Feb 15-17 | Manual Entry form + Onboarding | ✅ | - | Manual entry form, onboarding flow, app coordinator |
 
-**Week 1 Progress**: █████░░░ 45%
+**Week 1 Progress**: ████████ 100%
 
 ---
 
 ### Week 2: Transactions & Dashboard (Feb 18-24, 2026)
 **Goal**: View and analyze transactions  
-**Status**: 📅 Not Started
+**Status**: 🚧 In Progress - Day 8 of 21 (Week 2, Day 1)
 
 | Day | Date | Tasks | Status | Hours | Notes |
 |-----|------|-------|--------|-------|-------|
-| 8 | Feb 18 | Transactions list view - basic | 📅 | - | Fetch and display transactions |
+| 8 | Feb 18 | Transactions list view - basic | 🚧 | - | Today: docs update; start fetch/display transactions |
 | 9 | Feb 19 | Transaction row design & swipe actions | 📅 | - | Create row component, delete/edit |
 | 10 | Feb 20 | Filtering & search functionality | 📅 | - | Add filters and search bar |
 | 11 | Feb 21 | Transactions testing | 📅 | - | Test with various data sets |
@@ -53,7 +51,7 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 | 13 | Feb 23 | Dashboard charts (Swift Charts) | 📅 | - | Integrate charts, visualizations |
 | 14 | Feb 24 | Dashboard testing & polish | 📅 | - | Final polish and performance |
 
-**Week 2 Progress**: ░░░░░░░░ 0%
+**Week 2 Progress**: █░░░░░░░ 14%
 
 ---
 
@@ -137,25 +135,25 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ---
 
-#### Task 3: Manual Entry Form 📅
-**Duration**: 3 days | **Status**: Not Started | **Priority**: CRITICAL
+#### Task 3: Manual Entry Form ✅
+**Duration**: 3 days | **Status**: Complete | **Priority**: CRITICAL
 
-- [ ] Form state management
-- [ ] Amount input field
-- [ ] Date picker
-- [ ] Category picker (grid)
-- [ ] Account selector
-- [ ] Merchant/title field
-- [ ] Payment method picker
-- [ ] Notes field
-- [ ] Recurring toggle
-- [ ] Save button with validation
-- [ ] Success feedback
-- [ ] Form reset functionality
+- [x] Form state management
+- [x] Amount input field
+- [x] Date picker
+- [x] Category picker (grid)
+- [x] Account selector
+- [x] Merchant/title field
+- [x] Payment method picker
+- [x] Notes field
+- [x] Recurring toggle
+- [x] Save button with validation
+- [x] Success feedback
+- [x] Form reset functionality
 
-**Progress**: ░░░░░░░░░░░░ 0/12 items (0%)
+**Progress**: ████████████ 12/12 items (100%)
 
-**Scheduled**: Feb 15-17 (Days 5-7)
+**Completed**: Feb 15-17+ (Days 5-7, extended)
 
 ---
 
@@ -232,13 +230,13 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 |-----------|-------------|--------|------------|
 | Project Plan Complete | Feb 11 | ✅ | 100% |
 | Core Data Extensions | Feb 13 | ✅ | 100% |
-| Manual Entry Working | Feb 17 | 📅 | 0% |
+| Manual Entry Working | Feb 17 | ✅ | 100% |
 | Category Seeder Integrated | Feb 14 | ✅ | 80% |
 | Transactions List | Feb 21 | 📅 | 0% |
 | Dashboard Analytics | Feb 24 | 📅 | 0% |
 | Budget Management | Feb 28 | 📅 | 0% |
 | Settings Complete | Mar 2 | 📅 | 0% |
-| **MVP Launch** | **Mar 4** | 📅 | **38%** |
+| **MVP Launch** | **Mar 4** | 📅 | **55%** |
 
 ---
 
@@ -328,20 +326,41 @@ Phase 3: Advanced Features   [░░░░░░░░░░░░░░░░�
 
 ---
 
-### 2026-02-13 (Day 3) 📅
+### 2026-02-18 (Day 8) 🚧
+**Focus**: Week 2 kickoff – Transactions list & documentation
+
+**Completed**:
+- ✅ Updated all .md documentation to Feb 18, 2026
+- ✅ Progress Tracker: Week 2 Day 8, Task 3 (Manual Entry) marked complete
+- ✅ Onboarding flow in place (OnboardingView, OnboardingViewModel, OnboardingStepViews, AddAccountSheet)
+- ✅ AppCoordinator for app state (loading → onboarding → main)
+- ✅ Core Data model updates (TrackSpendture.xcdatamodeld)
+
+**Planned**:
+- [ ] Transactions list view – basic fetch and display
+- [ ] Transaction row component
+- [ ] Group transactions by date
+
+**Blockers**: None
+
+**Notes**: Week 1 deliverables (Manual Entry + onboarding) completed; starting Week 2 focus on transactions list and dashboard.
+
+---
+
+### 2026-02-13 (Day 3) ✅
 **Focus**: Core Data Extensions - Part 2
 
 **Planned**:
 - [x] ~~Fix tab routing mismatch~~ (already correct)
 - [x] ~~Fix default category helper mismatch~~ (quick fixes applied)
-- [ ] Start ManualEntryView form state + layout (or polish)
-- [ ] Add validation and save flow skeleton
+- [x] Start ManualEntryView form state + layout (or polish)
+- [x] Add validation and save flow skeleton
 
-**Completed**:
+**Completed**: Manual Entry and onboarding work continued through Feb 17.
 
-**Blockers**:
+**Blockers**: None
 
-**Notes**:
+**Notes**: —
 
 ---
 
@@ -422,4 +441,4 @@ Day 21: █░░░░░░░░░░░░░░░░░░░░ (0/21) �
 
 **Remember**: Update this tracker daily to stay on track and motivated! 🚀
 
-**Next Update**: End of Day 3 (Feb 13)
+**Next Update**: End of Day 9 (Feb 19)

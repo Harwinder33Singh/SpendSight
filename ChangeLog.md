@@ -6,7 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Week 1 (Feb 11-17, 2026) - In Progress
+### Week 2 (Feb 18-24, 2026) - In Progress
+
+#### [0.3.0] - 2026-02-18
+**Day 8 of 21 - Documentation & Week 2 Kickoff**
+
+##### Added
+- Onboarding flow: `OnboardingView`, `OnboardingViewModel`, `OnboardingStepViews`, `AddAccountSheet`
+- `AppCoordinator` for app state (loading → onboarding → main)
+- First-launch onboarding before main app content
+
+##### Changed
+- `SpendSightApp`: uses `AppCoordinator`; shows loading → onboarding → `RootTabView` with category seeding
+- All .md docs updated to Feb 18, 2026 (TODO, Progress Tracker, README, ChangeLog, Contributing)
+- Progress Tracker: Week 2 Day 8, Task 3 (Manual Entry) marked complete, Week 1 complete
+- Core Data model: `TrackSpendture.xcdatamodeld` updated
+
+##### In Progress
+- Transactions list view (fetch, display, row component)
+- Filtering and search (Week 2)
+
+##### Planned
+- Dashboard layout and charts (Week 2)
+- Budget management, Settings (Week 3)
+
+---
+
+### Week 1 (Feb 11-17, 2026) - Complete
 
 #### [0.2.0] - 2026-02-12
 **Day 2 of 21 - Core Data Extensions + Category Seeding**
@@ -103,14 +129,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ### Phase 2: Core Functionality (Feb 11 - Mar 4, 2026)
-**Status**: 🚧 In Progress (Day 2 of 21)
+**Status**: 🚧 In Progress (Day 8 of 21)
 
-**Current Sprint**: Week 1 - Foundation & Manual Entry
-**Current Task**: Validate category seeding flow and finish Core Data extensions
+**Current Sprint**: Week 2 - Transactions & Dashboard
+**Current Task**: Transactions list view – fetch, display, row design
 
 **Target Features**:
-- Manual transaction entry ⏳
-- Transaction listing and management 📅
+- Manual transaction entry ✅
+- Onboarding flow ✅
+- Transaction listing and management 🚧
 - Dashboard analytics 📅
 - Category and budget management 📅
 - Settings configuration 📅
@@ -133,6 +160,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## Development Notes
+
+### 2026-02-18 (Day 8)
+**Focus**: Documentation update & Week 2 kickoff
+
+**Progress**:
+- Updated all .md files to Feb 18, 2026
+- Marked Week 1 complete (Manual Entry, onboarding, AppCoordinator)
+- Set current sprint to Week 2 – Transactions & Dashboard
+- Onboarding flow and Core Data model changes in place
+
+**Next Steps**:
+- Implement transactions list view (fetch, display, sections)
+- Transaction row component, swipe-to-delete, tap-to-edit
+- Filtering and search
+
+**Blockers**: None
+
+---
 
 ### 2026-02-12 (Day 2)
 **Focus**: Core Data Extensions + Category Seeding
@@ -300,4 +345,4 @@ When ready to release v0.2.0:
 
 **Update Frequency**: Daily during active development
 
-**Last Updated**: February 12, 2026, 3:38 PM
+**Last Updated**: February 18, 2026

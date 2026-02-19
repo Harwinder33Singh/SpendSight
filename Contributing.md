@@ -10,7 +10,7 @@ Thank you for your interest in contributing to SpendSight! This document provide
 - [Commit Guidelines](#commit-guidelines)
 - [Pull Request Process](#pull-request-process)
 
-**Last Updated**: February 12, 2026
+**Last Updated**: February 18, 2026
 
 ## Code of Conduct
 

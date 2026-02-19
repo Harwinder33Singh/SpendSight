@@ -1,8 +1,8 @@
 # SpendSight - Development TODO
 
-**Last Updated**: February 12, 2026  
-**Current Sprint**: Week 1 - Foundation & Manual Entry  
-**Sprint Day**: 2 of 21
+**Last Updated**: February 18, 2026  
+**Current Sprint**: Week 2 - Transactions & Dashboard  
+**Sprint Day**: 8 of 21
 
 ---
 
@@ -123,8 +123,8 @@ SpendSight/Core/Utilities/
 
 ---
 
-### Task 3: Manual Entry Form (Days 5-7 - Feb 15-17) 📅
-**Priority**: CRITICAL | **Status**: NOT STARTED | **Depends On**: Task 1, 2
+### Task 3: Manual Entry Form (Days 5-7 - Feb 15-17) ✅
+**Priority**: CRITICAL | **Status**: COMPLETE | **Depends On**: Task 1, 2
 
 #### ManualEntryView.swift - Complete Rewrite
 - [ ] Create form state management with @State variables
@@ -403,35 +403,25 @@ SpendSight/Shared/Components/
 
 ## 🎯 Daily Checklist
 
-### Today (Day 2 - Feb 12)
-- [x] Fix Transaction validation logic (lines 181-194)
-- [x] Fix Category sort descriptor issues
-- [ ] Complete Transaction+Extensions.swift
-- [ ] Complete Category+Extensions.swift
-- [ ] Test both extensions thoroughly
-- [x] Create `CategorySeeder.swift`
-- [x] Integrate seeder into `SpendSightApp.swift` on launch
-- [x] Add category seeder debug/test helper view
+### Today (Day 8 - Feb 18)
+- [ ] Transactions list view – basic fetch and display
+- [ ] Transaction row component (category icon, merchant, amount, date)
+- [ ] Begin filter/section by date
+- [ ] Review onboarding flow integration
 
-### Tomorrow (Day 3 - Feb 13)
-- [ ] Complete Account+Extensions.swift
-- [ ] Complete Income+Extensions.swift
-- [ ] Complete SavingsPlan+Extensions.swift
-- [ ] Test all extensions together
-- [ ] Prepare for CategorySeeder
+### Tomorrow (Day 9 - Feb 19)
+- [ ] Transaction row design & swipe-to-delete
+- [ ] Tap-to-edit navigation
+- [ ] Empty state for transactions list
 
-### Day 4 (Feb 14)
-- [x] Create CategorySeeder.swift (completed early on Feb 12)
-- [x] Integrate seeder into app launch (completed early on Feb 12)
-- [x] Test default categories via debug helper actions (completed early on Feb 12)
-- [ ] Begin Manual Entry form design
+### Days 10-11 (Feb 20-21)
+- [ ] Filtering & search functionality
+- [ ] Transactions testing with various data sets
 
-### Days 5-7 (Feb 15-17)
-- [ ] Build Manual Entry form UI
-- [ ] Implement validation
-- [ ] Add save functionality
-- [ ] Test end-to-end transaction creation
-- [ ] Polish UI/UX
+### Week 2 (Feb 18-24)
+- [ ] Dashboard layout & summary cards (Days 12-14)
+- [ ] Dashboard charts (Swift Charts)
+- [ ] Dashboard testing & polish
 
 ---
 

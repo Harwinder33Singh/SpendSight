@@ -28,10 +28,10 @@ SpendSight is a personal finance tracking app that makes it easy to:
 - [x] Default category seeding system (10 categories, first-launch only)
 
 ### In Development (Phase 2) 🚧
-- [ ] Manual transaction entry with form validation (Week 1)
-- [ ] Transaction list with filtering and search (Week 2)
+- [x] Manual transaction entry with form validation (Week 1 – done)
+- [ ] Transaction list with filtering and search (Week 2 – in progress)
 - [ ] Dashboard with spending analytics (Week 2)
-- [ ] Category management with icons and colors (Week 1-2)
+- [x] Onboarding flow and first-launch experience
 - [ ] Budget tracking with progress indicators (Week 3)
 - [ ] Settings and account management (Week 3)
 
@@ -167,31 +167,25 @@ The app will automatically:
 
 ## 🛠 Development
 
-### Current Sprint (Week 1: Feb 11-17, 2026)
-**Goal**: Core Data extensions, category seeding, and Manual Entry preparation
+### Current Sprint (Week 2: Feb 18-24, 2026)
+**Goal**: Transactions list and dashboard
 
-**Status**: Day 2 of 21 - 🚧 In Progress (Task 1 and Task 2 complete)
+**Status**: Day 8 of 21 - 🚧 In Progress (Week 1 complete)
 
-- [x] Task 1: Create Core Data extensions (completed on Day 2 - Feb 12)
-  - [x] Transaction+Extensions.swift
-  - [x] Category+Extensions.swift
-  - [x] Account+Extensions.swift
-  - [x] Income+Extensions.swift
-  - [x] SavingsPlan+Extensions.swift
+- [x] Task 1: Core Data extensions (completed Feb 12)
+- [x] Task 2: Default categories setup (completed Feb 12)
+- [x] Task 3: Manual Entry form (completed Feb 15-17)
+  - [x] Full form UI with validation
+  - [x] Save to Core Data
+  - [x] Onboarding flow (OnboardingView, OnboardingViewModel, OnboardingStepViews, AddAccountSheet)
+  - [x] AppCoordinator (loading → onboarding → main)
 
-- [x] Task 2: Default categories setup (completed early on Day 2 - Feb 12)
-  - [x] CategorySeeder.swift
-  - [x] 10 default categories with icons
-  - [x] One-time seeding via UserDefaults flag
-  - [x] Integrated with app launch in `SpendSightApp`
-  - [x] Added `CategorySeederDebugView` for manual verification
+- [ ] Task 4: Transactions list (Week 2 – in progress)
+  - [ ] Fetch and display transactions
+  - [ ] Transaction row, swipe-to-delete, tap-to-edit
+  - [ ] Filtering and search
 
-- [ ] Task 3: Manual Entry form (Days 5-7)
-  - [ ] Complete form UI
-  - [ ] Validation logic
-  - [ ] Save functionality
-
-**Milestone**: Users can add transactions manually
+**Milestone**: Users can view and manage transactions
 
 ### Development Guidelines
 
@@ -233,14 +227,14 @@ The app will automatically:
 
 ## 📝 Roadmap
 
-### Week 1: Foundation (Current - Days 1-7)
+### Week 1: Foundation (Days 1-7) ✅
 - [x] Day 1: Project planning & documentation (Feb 11)
-- [x] Days 2-3: Core Data extensions (completed early on Feb 12)
-- [x] Day 4 scope (default categories seeding) completed early on Feb 12
-- [ ] Days 5-7: Manual entry form (Feb 15-17)
+- [x] Days 2-3: Core Data extensions (Feb 12)
+- [x] Day 4 scope (default categories seeding) completed early
+- [x] Days 5-7: Manual entry form + onboarding (Feb 15-17)
 
-### Week 2: Core Features (Days 8-14)
-- [ ] Transactions list view
+### Week 2: Core Features (Current - Days 8-14)
+- [ ] Transactions list view (Feb 18+)
 - [ ] Dashboard with charts
 - [ ] Basic filtering
 - [ ] Search functionality
@@ -277,7 +271,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Harwinder Singh**
 - Started: January 2, 2026
-- Status: Active Development (Day 2 of 21)
+- Status: Active Development (Day 8 of 21)
 
 ## 📞 Support
 
@@ -295,19 +289,19 @@ For questions or issues:
 
 ## 📊 Project Status
 
-**Last Updated**: February 12, 2026
+**Last Updated**: February 18, 2026
 
 **Current Phase**: Phase 2 - Core Functionality
 
-**Current Task**: Validate category seeding flow and continue Core Data extensions
+**Current Task**: Transactions list view – fetch, display, and basic interactions
 
-**Sprint**: Week 1, Day 2 of 21
+**Sprint**: Week 2, Day 8 of 21
 
-**Next Milestone**: Complete Core Data extensions by Feb 13
+**Next Milestone**: Transactions list with filters and search (Feb 21)
 
 **Target MVP Date**: March 4, 2026
 
-**Latest Update**: Implemented `CategorySeeder`, wired one-time category seeding on app launch, and added `CategorySeederDebugView` plus helper utilities for validation/reset testing.
+**Latest Update**: Week 1 complete (Manual Entry form, onboarding flow, AppCoordinator). Documentation updated. Starting Week 2: transactions list and dashboard.
 
 ---
 
