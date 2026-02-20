@@ -29,7 +29,6 @@ extension UserProfile {
         self.currency = currency
         self.profileImageData = profileImageData
         self.hasCompletedOnboarding = false
-        self.isBiometricEnabled = false
         self.createdAt = Date()
         self.updatedAt = Date()
     }
@@ -79,16 +78,6 @@ extension UserProfile {
     
     func completeOnboarding() {
         self.hasCompletedOnboarding = true
-        self.updatedAt = Date()
-    }
-    
-    func enableBiometric() {
-        self.isBiometricEnabled = true
-        self.updatedAt = Date()
-    }
-    
-    func disableBiometric() {
-        self.isBiometricEnabled = false
         self.updatedAt = Date()
     }
     

@@ -23,14 +23,6 @@
 //    }
 //}
 
-
-//
-//  SpendSightApp.swift
-//  SpendSight
-//
-//  Main app entry point with onboarding
-//
-
 import SwiftUI
 import CoreData
 
