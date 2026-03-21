@@ -1,81 +1,24 @@
 # SpendSight - Development TODO
 
-**Last Updated**: February 18, 2026  
-**Current Sprint**: Week 2 - Transactions & Dashboard  
-**Sprint Day**: 8 of 21
+**Last Updated**: March 20, 2026  
+**Current focus**: Polish, tests, and Phase 3 planning (core app flows are implemented in Xcode)
 
 ---
 
-## 🔴 CRITICAL PATH - Do These First
+## 🔴 CRITICAL PATH — Status vs repo
 
-### Task 1: Core Data Extensions (Days 2-3) ⏳
-**Priority**: HIGHEST | **Status**: IN PROGRESS | **Blocker**: None
+### Task 1: Core Data extensions ✅
+**Priority**: HIGHEST | **Status**: COMPLETE | **Location**: `SpendSight/Models/Extensions/`
 
-#### Transaction+Extensions.swift ⏳
-- [ ] Create convenience initializer
-- [ ] Add `displayDate` computed property
-- [ ] Add `formattedAmount` computed property
-- [ ] Add `categoryName` computed property
-- [ ] Add `accountName` computed property
-- [ ] Add `isExpense` and `isIncome` computed properties
-- [ ] Add `absoluteAmount` computed property
-- [ ] Create fetch request builder with filters
+Implemented files:
+- `Transaction+Extensions.swift`
+- `Category+Extensions.swift`
+- `Account+Extensions.swift`
+- `Income+Extensions.swift`
+- `SavingsPlan+Extensions.swift`
+- `UserProfile+Extensions.swift` (sixth entity — onboarding / profile)
 
-#### Category+Extensions.swift ⏳
-- [ ] Create convenience initializer with defaults
-- [ ] Add `color` computed property for SwiftUI Color
-- [ ] Add `hexColor` computed property
-- [ ] Add `sfSymbol` computed property
-- [ ] Add budget-related computed properties
-- [ ] Create fetch request for all categories
-- [ ] Add sort descriptor helpers
-- [ ] Test category creation and retrieval
-
-#### Account+Extensions.swift
-- [ ] Create convenience initializer
-- [ ] Add `displayName` computed property (name + institution)
-- [ ] Add `formattedLast4` computed property (••••1234)
-- [ ] Add balance calculation methods
-- [ ] Create fetch request builder
-- [ ] Add validation for institution/last4
-- [ ] Test account operations
-
-#### Income+Extensions.swift
-- [ ] Create convenience initializer
-- [ ] Add `formattedAmount` computed property
-- [ ] Add `displayDate` computed property
-- [ ] Add `accountName` computed property
-- [ ] Create fetch requests by date range
-- [ ] Add validation methods
-- [ ] Test income tracking
-
-#### SavingsPlan+Extensions.swift
-- [ ] Create convenience initializer
-- [ ] Add `progressPercentage` computed property
-- [ ] Add `remainingAmount` computed property
-- [ ] Add `isComplete` computed property
-- [ ] Add `formattedTargetAmount` computed property
-- [ ] Create fetch request for active plans
-- [ ] Add validation methods
-- [ ] Test savings calculations
-
-**Files to Create**:
-```
-SpendSight/Core/Extensions/
-├── Transaction+Extensions.swift
-├── Category+Extensions.swift 
-├── Account+Extensions.swift
-├── Income+Extensions.swift
-└── SavingsPlan+Extensions.swift
-```
-
-**Acceptance Criteria**:
-- ✅ All entities have convenience initializers
-- ✅ Display properties are formatted correctly
-- ✅ Fetch requests return expected data
-- ✅ Validation logic works correctly (use guard statements)
-- ✅ No compiler warnings or errors
-- ✅ Manual testing passes for all extensions
+**Acceptance criteria**: Met for shipping v1-style features; extend as new attributes ship.
 
 ---
 
@@ -102,17 +45,17 @@ SpendSight/Core/Extensions/
 9. ❓ **Other** - `#9E9E9E` - `questionmark.circle.fill` - No budget
 10. 🏠 **Housing** - `#607D8B` - `house.fill` - Budget: $1500
 
-**Files to Create**:
+**Files**:
 ```
-SpendSight/Core/Utilities/
+SpendSight/Models/Utilities/
 └── CategorySeeder.swift
 ```
 
 **Integration**:
-- [x] Call seeder in `SpendSightApp.swift` on first launch
-- [x] Add UserDefaults key: `"hasSeededCategories"`
-- [x] Add debug view/actions for category creation/reset validation
-- [ ] Test category creation in non-debug user flows (pickers/lists)
+- [x] UserDefaults key: `"hasSeededCategories"` (also cleared on `AppCoordinator.logout`)
+- [x] Onboarding completion marks seeding / creates selected categories (`OnboardingViewModel` + `CategorySeeder` extension)
+- [ ] Note: `CategorySeeder.seedIfNeeded` in commented `SpendSightApp` block is **not** the active path — onboarding drives first categories
+- [ ] Verify edge cases: skip onboarding (if ever), reinstall, logout → re-onboard
 
 **Acceptance Criteria**:
 - ✅ Categories only seed once
@@ -123,305 +66,82 @@ SpendSight/Core/Utilities/
 
 ---
 
-### Task 3: Manual Entry Form (Days 5-7 - Feb 15-17) ✅
-**Priority**: CRITICAL | **Status**: COMPLETE | **Depends On**: Task 1, 2
+### Task 3: Manual Entry ✅
+**Priority**: CRITICAL | **Status**: COMPLETE | **Path**: `SpendSight/Views/Features/ManualEntry/`
 
-#### ManualEntryView.swift - Complete Rewrite
-- [ ] Create form state management with @State variables
-  - [ ] amount: Double
-  - [ ] selectedDate: Date
-  - [ ] selectedCategory: Category?
-  - [ ] selectedAccount: Account?
-  - [ ] merchant: String
-  - [ ] title: String
-  - [ ] notes: String
-  - [ ] paymentMethod: String
-  - [ ] isRecurring: Bool
-  - [ ] showValidationError: Bool
-  - [ ] errorMessage: String
+Shipped (high level):
+- [x] `ManualEntryView` with validation and Core Data save
+- [x] `CurrencyTextField`, `CategoryPickerView`, `AccountPickerView`
 
-- [ ] Implement amount input field
-  - [ ] NumberPad keyboard
-  - [ ] Currency formatting as you type
-  - [ ] Validation (must be > 0)
-  - [ ] Custom CurrencyTextField component
-
-- [ ] Add date picker
-  - [ ] Default to today
-  - [ ] Prevent future dates
-  - [ ] Nice date display format
-
-- [ ] Create category picker
-  - [ ] Grid layout (2 columns)
-  - [ ] Show icon + name + color
-  - [ ] Selection highlighting
-  - [ ] Fetch categories from Core Data
-
-- [ ] Build account selector
-  - [ ] Picker or dropdown
-  - [ ] Show account name + last4
-  - [ ] Remember last used account (UserDefaults)
-
-- [ ] Add merchant/title field
-  - [ ] Text field with placeholder
-  - [ ] Auto-capitalization
-  - [ ] Minimum 2 characters validation
-
-- [ ] Implement payment method picker
-  - [ ] Options: Credit Card, Debit Card, Cash, Other
-  - [ ] Default to last used
-  - [ ] Save selection to UserDefaults
-
-- [ ] Create notes field
-  - [ ] Multi-line TextEditor
-  - [ ] Optional
-  - [ ] Character limit (200)
-  - [ ] Show character count
-
-- [ ] Add recurring toggle
-  - [ ] Simple Toggle switch
-  - [ ] Phase 2 will add frequency picker
-
-- [ ] Build save button
-  - [ ] Validation before save
-  - [ ] Loading state indicator
-  - [ ] Success feedback (haptic + animation)
-  - [ ] Error handling with alert
-  - [ ] Create Transaction with all fields
-  - [ ] Save to Core Data context
-
-- [ ] Add cancel/reset functionality
-  - [ ] Clear all fields button
-  - [ ] Confirmation dialog
-
-#### Form Validation Rules
-- [ ] Amount must be greater than 0
-- [ ] Date cannot be in future
-- [ ] Category must be selected (required)
-- [ ] Account must be selected (required)
-- [ ] Merchant minimum 2 characters (if provided)
-- [ ] Title minimum 2 characters (if provided)
-- [ ] Notes max 200 characters
-
-#### UI/UX Polish
-- [ ] Auto-focus on amount field when view appears
-- [ ] Keyboard dismissal on tap outside
-- [ ] Smooth animations for picker transitions
-- [ ] Clear visual feedback for validation errors
-- [ ] Success animation after save (checkmark + fade)
-- [ ] Form resets after successful save
-- [ ] Haptic feedback on save
-
-**Files to Create/Modify**:
-```
-SpendSight/Features/ManualEntry/
-└── ManualEntryView.swift (complete rewrite)
-
-Optional Reusable Components:
-SpendSight/Shared/Components/
-├── CategoryPickerView.swift
-├── AccountPickerView.swift
-└── CurrencyTextField.swift
-```
-
-**Acceptance Criteria**:
-- ✅ Form validation works correctly
-- ✅ Transactions save to Core Data successfully
-- ✅ All fields update state properly
-- ✅ UI is intuitive and responsive
-- ✅ No crashes on save/cancel
-- ✅ Data persists after app restart
-- ✅ Validation errors show clear messages
-- ✅ Success feedback is satisfying
+**Follow-ups (optional polish)**:
+- [ ] Recurring frequency UI (beyond `isRecurring` flag)
+- [ ] UX pass: keyboard focus, haptics, animation consistency
 
 ---
 
-## 🟡 IMPORTANT - Do These Second (Week 2)
+## 🟡 IMPORTANT — shipped in repo
 
-### Task 4: Transactions List View (Days 8-11) 📅
-**Priority**: HIGH | **Status**: NOT STARTED | **Depends On**: Task 1, 3
+### Task 4: Transactions list ✅
+**Priority**: HIGH | **Status**: COMPLETE | **Files**: `TransactionsView.swift`, `TransactionComponents.swift`, `TransactionsViewModel.swift`
 
-#### TransactionsView.swift - Complete Rewrite
-- [ ] Set up Core Data fetch request with @FetchRequest
-- [ ] Group transactions by date (sections)
-- [ ] Create transaction row component
-  - [ ] Category icon with color
-  - [ ] Merchant/title
-  - [ ] Formatted amount (color-coded: red for expenses, green for income)
-  - [ ] Date
-  - [ ] Account indicator
-- [ ] Implement swipe-to-delete
-  - [ ] Confirmation alert
-  - [ ] Delete from Core Data
-  - [ ] Refresh list
-- [ ] Add tap-to-edit navigation
-  - [ ] Navigate to edit view (or sheet)
-  - [ ] Pre-fill form with transaction data
-- [ ] Build filter sheet
-  - [ ] Date range filter (Today, This Week, This Month, Custom)
-  - [ ] Category filter (multi-select)
-  - [ ] Account filter
-  - [ ] Amount range filter
-  - [ ] Apply/clear filter buttons
-- [ ] Add search bar
-  - [ ] Search by merchant
-  - [ ] Search by title
-  - [ ] Search by notes
-- [ ] Create empty state
-  - [ ] Friendly message
-  - [ ] "Add Transaction" button
-  - [ ] Illustration
-- [ ] Implement pull-to-refresh
+- [x] `@FetchRequest` + client-side filter/search via view model
+- [x] Sections grouped by relative date labels
+- [x] `TransactionRow`, detail navigation, swipe edit (sheet) / delete (confirm)
+- [x] `FilterSheet` — date preset, categories, accounts, amount min/max
+- [x] `.searchable` for text search
+- [x] Empty state (`ContentUnavailableView`) + clear filters
+- [x] `refreshable` → `context.refreshAllObjects()`
 
-**Acceptance Criteria**:
-- ✅ Transactions display correctly
-- ✅ Grouping by date works
-- ✅ Filtering works as expected
-- ✅ Delete/edit operations succeed
-- ✅ Performance is smooth with 100+ transactions
-- ✅ Search returns relevant results
+**Follow-ups**:
+- [ ] Stress-test with 500+ rows (consider fetch limits / predicates)
+- [ ] Unit tests for `matchesFilters` / predicate building
 
 ---
 
-### Task 5: Dashboard View (Days 12-14) 📅
-**Priority**: HIGH | **Status**: NOT STARTED | **Depends On**: Task 1, 4
+### Task 5: Dashboard ✅
+**Priority**: HIGH | **Status**: COMPLETE (core scope) | **Files**: `DashboardView.swift`, `DashboardComponents.swift`, `DashboardViewModel.swift`
 
-#### DashboardView.swift - Complete Rewrite
-- [ ] Create spending summary cards
-  - [ ] This Month total
-  - [ ] Today total
-  - [ ] This Week total
-  - [ ] Average daily spending
-- [ ] Build top categories chart
-  - [ ] Use Swift Charts
-  - [ ] Pie chart or bar chart
-  - [ ] Show top 5 categories
-  - [ ] Color-coded by category
-- [ ] Add spending trend chart
-  - [ ] Line chart showing last 30 days
-  - [ ] Daily spending amount
-  - [ ] Moving average line
-- [ ] Show recent transactions (last 5)
-  - [ ] Mini transaction rows
-  - [ ] "See All" button
-- [ ] Add budget progress indicators
-  - [ ] Progress bars for each category with budget
-  - [ ] Color coding: green < 80%, yellow 80-100%, red > 100%
-  - [ ] Remaining amount display
-- [ ] Create quick-add floating button
-  - [ ] Fixed position
-  - [ ] Navigate to Manual Entry
-  - [ ] Nice animation
-- [ ] Design budget overrun alerts
-  - [ ] Banner at top if over budget
-  - [ ] Dismiss button
-  - [ ] List categories over budget
+- [x] Summary cards (today, week, month, daily average)
+- [x] Swift Charts: top categories + 30-day trend with moving average (`DashboardComponents`)
+- [x] Floating `+` → `ManualEntryView` sheet
 
-#### Swift Charts Integration
-- [ ] Import Charts framework
-- [ ] Create CategorySpendingChart component
-- [ ] Create SpendingTrendChart component
-- [ ] Make charts interactive (tap for details)
-- [ ] Add loading states
-
-**Acceptance Criteria**:
-- ✅ Dashboard loads quickly
-- ✅ Charts render correctly
-- ✅ Data updates in real-time
-- ✅ Quick-add button navigates correctly
-- ✅ Budget alerts show when appropriate
-- ✅ Performance is smooth
+**Follow-ups**:
+- [ ] Recent-transactions strip + “See all” (if not present in current scroll content)
+- [ ] Budget overrun banner tied to live spend vs `Category.monthlyBudget`
+- [ ] Chart tap-for-detail interactions
 
 ---
 
-## 🟢 NICE TO HAVE - Polish (Week 3)
+## 🟢 Polish & Week 3 items
 
-### Task 6: Budget Management (Days 15-18) 📅
-**Priority**: MEDIUM | **Status**: NOT STARTED
+### Task 6: Budget management 🚧
+**Priority**: MEDIUM | **Status**: LARGELY COMPLETE in UI | **Files**: `BudgetsView.swift`, `BudgetDetailView.swift`, `AddBudgetView.swift`
 
-- [ ] Create budget overview screen
-  - [ ] List all categories
-  - [ ] Show current budget vs. actual
-  - [ ] Progress bars
-  - [ ] Edit button per category
-- [ ] Build budget setting UI per category
-  - [ ] Enter monthly budget amount
-  - [ ] Save to category entity
-  - [ ] Validation (> 0)
-- [ ] Implement progress calculations
-  - [ ] Calculate spent this month
-  - [ ] Calculate remaining
-  - [ ] Calculate percentage
-- [ ] Add budget vs. actual comparison
-  - [ ] Visual indicators
-  - [ ] Color coding
-- [ ] Create notifications for budget alerts
-  - [ ] 80% warning
-  - [ ] 100% alert
-  - [ ] Local notifications (Phase 2)
-
-**Acceptance Criteria**:
-- ✅ Can set budgets for categories
-- ✅ Progress calculates correctly
-- ✅ Visual feedback is clear
-- ✅ Alerts trigger at correct thresholds
+- [x] Overview, active budgets, add budget flow, detail navigation
+- [ ] Local notifications at 80% / 100% spend
+- [ ] End-to-end tests for monthly spend math vs transactions
 
 ---
 
-### Task 7: Settings View (Days 19-21) 📅
-**Priority**: MEDIUM | **Status**: NOT STARTED
+### Task 7: Settings 🚧
+**Priority**: MEDIUM | **Status**: SUBSTANTIAL UI | **File**: `SettingsView.swift` (+ nested views)
 
-- [ ] Build account management screen
-  - [ ] List all accounts
-  - [ ] Add new account form
-  - [ ] Edit account details
-  - [ ] Delete account (with warning)
-- [ ] Create default account selection
-  - [ ] Picker for default account
-  - [ ] Save to UserDefaults
-- [ ] Implement currency selection
-  - [ ] USD, EUR, GBP, etc.
-  - [ ] Save to UserDefaults
-  - [ ] Update all formatting
-- [ ] Add data export functionality
-  - [ ] Export to CSV
-  - [ ] Export to PDF report
-  - [ ] Share sheet
-- [ ] Build backup/restore feature
-  - [ ] Export Core Data to JSON
-  - [ ] Import JSON to Core Data
-  - [ ] Validation on import
+- [x] Category management (`CategoryManagementView`, `AddEditCategoryView`)
+- [x] Account management (`AccountManagementView`, `AddEditAccountView`)
+- [x] Profile name via `@AppStorage`, multiple settings sheets (notifications, backup, help, privacy, database info in DEBUG)
+- [ ] Wire **global currency** from `UserProfile` / `@AppStorage` through all formatters consistently
+- [ ] CSV / PDF export and JSON backup — verify implementations vs placeholders
 
-**Acceptance Criteria**:
-- ✅ Can manage accounts
-- ✅ Default account works
-- ✅ Currency changes apply globally
-- ✅ Export creates valid files
-- ✅ Backup/restore works without data loss
+**Acceptance Criteria**: Track remaining items above in GitHub issues as you verify each flow.
 
 ---
 
-## 🎯 Daily Checklist
+## 🎯 Near-term checklist (post–doc sync)
 
-### Today (Day 8 - Feb 18)
-- [ ] Transactions list view – basic fetch and display
-- [ ] Transaction row component (category icon, merchant, amount, date)
-- [ ] Begin filter/section by date
-- [ ] Review onboarding flow integration
-
-### Tomorrow (Day 9 - Feb 19)
-- [ ] Transaction row design & swipe-to-delete
-- [ ] Tap-to-edit navigation
-- [ ] Empty state for transactions list
-
-### Days 10-11 (Feb 20-21)
-- [ ] Filtering & search functionality
-- [ ] Transactions testing with various data sets
-
-### Week 2 (Feb 18-24)
-- [ ] Dashboard layout & summary cards (Days 12-14)
-- [ ] Dashboard charts (Swift Charts)
-- [ ] Dashboard testing & polish
+- [ ] Add XCTest targets for `TransactionsViewModel` and `DashboardViewModel`
+- [ ] Profile scrolling performance (Transactions list + Dashboard) with Instruments
+- [ ] Confirm logout / `deleteAllData` also clears `Income` and `SavingsPlan` if those features are user-visible
+- [ ] Add root `LICENSE` if open-sourcing
 
 ---
 
@@ -546,6 +266,4 @@ git merge feature/manual-entry-form
 
 ---
 
-**Remember**: Focus on the critical path! Complete Tasks 1-3 before moving to Week 2.
-
-**Priority Order**: Fix bugs → Complete extensions → Seed categories → Build form
+**Remember**: Critical path for MVP UI is largely complete; prioritize **tests**, **data safety** (logout/backup), and **Phase 3** features you want next.

@@ -6,7 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Week 2 (Feb 18-24, 2026) - In Progress
+### Documentation & codebase alignment — 2026-03-20
+
+##### Changed
+- README, TODO, Progress Tracker, Contributing, and this changelog updated to match the **current** repository:
+  - Folder layout: `Models/`, `Views/`, `ViewModels/`, `Managers/` (not legacy `Core/` + `Features/` paths).
+  - Core Data model documents **six** entities: `Account`, `Category`, `Income`, `SavingsPlan`, `Transaction`, `UserProfile`.
+  - `PersistenceController` exposes `loadError`; `SpendSightApp` uses `AppCoordinator` with `.failed` for store load failures.
+  - Category setup is driven primarily by **onboarding** (`OnboardingViewModel`); `CategorySeeder.seedIfNeeded` in `SpendSightApp` remains commented—seeding flags/helpers still used from onboarding completion.
+- README links fixed to actual filenames: `Contributing.md`, `ChangeLog.md`, `Progress Tracker.md` (URL-encoded link where needed).
+
+##### Added (implementation summary captured in docs)
+- **Transactions**: `TransactionsView` + `TransactionsViewModel` — grouped list, `.searchable`, filter sheet, swipe edit/delete, `refreshable`, empty states.
+- **Dashboard**: `DashboardView` + `DashboardViewModel` — summary cards, `CategorySpendingChart`, `SpendingTrendChart`, floating add → `ManualEntryView`.
+- **Budgets** / **Settings**: substantive SwiftUI flows beyond placeholders (e.g. `BudgetsView`, `AddBudgetView`, `BudgetDetailView`; settings sheets for categories, accounts, backup UI, etc.).
+
+---
+
+### Week 2 (Feb 18-24, 2026) - Superseded by later implementation
 
 #### [0.3.0] - 2026-02-18
 **Day 8 of 21 - Documentation & Week 2 Kickoff**
@@ -69,9 +86,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive project plan PDF
 - README.md with full documentation
 - TODO.md with detailed task breakdown
-- CHANGELOG.md for version tracking
-- CONTRIBUTING.md with coding standards
-- PROGRESS_TRACKER.md for daily updates
+- ChangeLog.md for version tracking
+- Contributing.md with coding standards
+- Progress Tracker.md for daily updates
 
 ##### Changed
 - Established 3-week sprint plan (21 days)
@@ -129,20 +146,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ### Phase 2: Core Functionality (Feb 11 - Mar 4, 2026)
-**Status**: 🚧 In Progress (Day 8 of 21)
+**Status**: 🚧 In Progress — primary UI flows shipped; polish and tests remain
 
-**Current Sprint**: Week 2 - Transactions & Dashboard
-**Current Task**: Transactions list view – fetch, display, row design
+**Current focus**: Tests, performance, accessibility, and export/backup hardening
 
-**Target Features**:
+**Target Features** (as of repo state, March 2026):
 - Manual transaction entry ✅
 - Onboarding flow ✅
-- Transaction listing and management 🚧
-- Dashboard analytics 📅
-- Category and budget management 📅
-- Settings configuration 📅
+- Transaction listing and management ✅
+- Dashboard analytics ✅
+- Category and budget management ✅ (budgets UI + settings management)
+- Settings configuration ✅ (substantial settings surface)
 
-**Expected Completion**: March 4, 2026
+**Expected Completion**: March 4, 2026 (MVP target)
 
 ---
 
@@ -161,6 +177,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Development Notes
 
+### 2026-03-20
+**Focus**: Align all root `.md` files with the actual Xcode project structure and implemented features.
+
+**Progress**:
+- Documented six-entity model, `Models/` / `Views/` / `ViewModels/` / `Managers/` layout
+- Recorded Transactions, Dashboard, Budgets, and Settings implementation status
+- Corrected cross-file links and outdated “Week 2 Day 8 only” narrative
+
+**Next Steps**:
+- Add automated tests and refine known gaps (export, notifications, etc.)
+
+**Blockers**: None
+
+---
+
 ### 2026-02-18 (Day 8)
 **Focus**: Documentation update & Week 2 kickoff
 
@@ -170,10 +201,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set current sprint to Week 2 – Transactions & Dashboard
 - Onboarding flow and Core Data model changes in place
 
-**Next Steps**:
-- Implement transactions list view (fetch, display, sections)
-- Transaction row component, swipe-to-delete, tap-to-edit
-- Filtering and search
+**Next Steps** (historical): Transactions list, filtering, dashboard — **since implemented in codebase**.
 
 **Blockers**: None
 
@@ -211,9 +239,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Comprehensive project plan
 - ✅ README.md with full documentation
 - ✅ TODO.md with detailed task breakdown
-- ✅ CHANGELOG.md for version tracking
-- ✅ CONTRIBUTING.md with coding standards
-- ✅ PROGRESS_TRACKER.md
+- ✅ ChangeLog.md for version tracking
+- ✅ Contributing.md with coding standards
+- ✅ Progress Tracker.md
 
 **Achievements**:
 - Established 21-day sprint plan
@@ -262,28 +290,17 @@ When migrations are needed, document them here:
 
 ## Known Issues
 
-### Active Issues (as of 2026-02-12)
+### Active Issues (as of 2026-03-20)
 
-1. **Transaction+Extensions.swift** - Validation Logic Bug
-   - **Location**: Lines 181-194
-   - **Issue**: Using `== nil` on Boolean `.isEmpty` property
-   - **Impact**: Validation always fails
-   - **Fix**: Use guard-let pattern with proper unwrapping
-   - **Priority**: HIGH
-   - **Status**: Identified, fix pending
+_No critical issues tracked in this changelog._ File new issues in GitHub for regressions or feature gaps.
 
-2. **Category+Extensions.swift** - Sort Descriptor Issues
-   - **Location**: Lines 85 and 91
-   - **Issues**:
-     - Line 85: Typo `sortByNameDecending` → should be `sortByNameDescending`
-     - Line 91: `sortByNameDescending` actually sorts by budget (wrong implementation)
-   - **Impact**: Sorting may not work as expected
-   - **Fix**: Rename typo and correct implementation
-   - **Priority**: MEDIUM
-   - **Status**: Identified, fix pending
+### Previously documented (resolved)
+
+1. **Transaction+Extensions.swift** — validation used incorrect optional/`isEmpty` logic — **addressed** (guard-let style validation).
+2. **Category+Extensions.swift** — sort descriptor naming / budget sort — **addressed** (see project history in TODO / Progress Tracker).
 
 ### Resolved Issues
-_None yet_
+- See “Previously documented (resolved)” above.
 
 ---
 
@@ -345,4 +362,4 @@ When ready to release v0.2.0:
 
 **Update Frequency**: Daily during active development
 
-**Last Updated**: February 18, 2026
+**Last Updated**: March 20, 2026

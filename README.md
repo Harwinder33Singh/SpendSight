@@ -20,25 +20,29 @@ SpendSight is a personal finance tracking app that makes it easy to:
 
 ## ✨ Features
 
-### Current (Phase 1) ✅
-- [x] Core Data model with 5 entities
-- [x] Tab-based navigation structure
-- [x] Persistence layer setup
-- [x] Project architecture established
-- [x] Default category seeding system (10 categories, first-launch only)
+### Current (Phase 1–2) ✅
+- [x] Core Data model with **6** entities (including `UserProfile` for onboarding and preferences)
+- [x] Tab-based navigation (`RootTabView`: Dashboard, Manual Entry, Transactions, Budgets, Settings)
+- [x] Persistence layer (`PersistenceController` with load-error handling and `DatabaseErrorView`)
+- [x] `AppCoordinator`: loading → onboarding → main (or failed if Core Data cannot load)
+- [x] Onboarding flow with profile, category selection, accounts, and `UserProfile` creation
+- [x] Default categories: created from onboarding selections (see `OnboardingViewModel`); `CategorySeeder` helpers remain for flags / tooling
+- [x] Manual transaction entry (`ManualEntryView` and supporting pickers/components)
+- [x] **Transactions** list: grouped by date, search, filter sheet, swipe edit/delete, detail navigation (`TransactionsView` + `TransactionsViewModel`)
+- [x] **Dashboard**: summary cards, Swift Charts (top categories + 30-day trend), floating add button (`DashboardView` + `DashboardViewModel`)
+- [x] **Budgets**: overview, active budgets, add/detail flows (`BudgetsView`, `AddBudgetView`, `BudgetDetailView`)
+- [x] **Settings**: profile, category/account management sheets, data/support sections (`SettingsView`)
 
-### In Development (Phase 2) 🚧
-- [x] Manual transaction entry with form validation (Week 1 – done)
-- [ ] Transaction list with filtering and search (Week 2 – in progress)
-- [ ] Dashboard with spending analytics (Week 2)
-- [x] Onboarding flow and first-launch experience
-- [ ] Budget tracking with progress indicators (Week 3)
-- [ ] Settings and account management (Week 3)
+### In Development / Polish 🚧
+- [ ] Automated tests (unit + UI)
+- [ ] Performance pass on large transaction sets
+- [ ] Accessibility and localization review
+- [ ] Optional: export/backup flows beyond current settings placeholders
 
 ### Planned (Phase 3+) 📅
 - [ ] Receipt scanning with Vision framework
 - [ ] Bank integration via Plaid API
-- [ ] Recurring transaction automation
+- [ ] Recurring transaction automation (beyond basic flag)
 - [ ] Home Screen widgets
 - [ ] iCloud sync
 - [ ] CSV import/export
@@ -47,70 +51,57 @@ SpendSight is a personal finance tracking app that makes it easy to:
 ## 🏗 Architecture
 
 ### Project Structure
+
 ```
 SpendSight/
 ├── App/
-│   └── SpendSightApp.swift          # App entry point
-├── Core/
-│   ├── CoreData+Save.swift          # Context extensions
-│   ├── PersistenceController.swift  # Core Data stack
-│   └── Extensions/                  # Core Data entity extensions
-│       ├── Transaction+Extensions.swift
-│       ├── Category+Extensions.swift
-│       ├── Account+Extensions.swift
-│       ├── Income+Extensions.swift
-│       └── SavingsPlan+Extensions.swift
-├── Features/
-│   ├── Budgets/
-│   │   └── BudgetsView.swift
-│   ├── Dashboard/
-│   │   └── DashboardView.swift
-│   ├── ManualEntry/
-│   │   └── ManualEntryView.swift
-│   ├── Settings/
-│   │   └── SettingsView.swift
-│   └── Transactions/
-│       └── TransactionsView.swift
-└── Resources/
-    └── TrackSpendture.xcdatamodeld  # Core Data model
+│   ├── SpendSightApp.swift           # @main, coordinator, managed object context
+│   └── TrackSpendture.xcdatamodeld   # Core Data model
+├── Managers/
+│   └── AppCoordinator.swift          # AppState: loading / onboarding / main / failed
+├── Models/
+│   ├── PersistenceController.swift   # NSPersistentContainer, loadError
+│   ├── CoreData+Save.swift
+│   ├── Extensions/                   # Entity helpers (fetch, validation, formatting)
+│   └── Utilities/
+│       └── CategorySeeder.swift
+├── ViewModels/
+│   ├── DashboardViewModel.swift
+│   ├── TransactionsViewModel.swift
+│   └── OnboardingViewModel.swift
+├── Views/
+│   ├── Onboarding/                   # OnboardingView, steps, AddAccountSheet
+│   └── Features/
+│       ├── Budgets/
+│       ├── Dashboard/                # Charts components
+│       ├── ManualEntry/
+│       ├── Settings/
+│       └── Transactions/             # Rows, filters, edit/detail
+└── RootTabView.swift                 # Main tab bar
 ```
 
 ### Data Model
 
 #### Core Entities
 
-**Transaction** (Primary Entity)
-- Tracks individual expenses/purchases
-- Links to Category and Account
-- Supports recurring transactions
-- Timestamps for audit trail
+**Transaction** — Expenses; links to `Category` and `Account`; recurring flag; timestamps.
 
-**Category**
-- Organizes transactions by type
-- Custom icons and colors
-- Monthly budget allocation
+**Category** — Name, icon, color hex, optional monthly budget.
 
-**Account**
-- Represents bank accounts/payment methods
-- Tracks both expenses and income
-- Institution details (name, last4, type)
+**Account** — Payment sources; institution metadata.
 
-**Income**
-- Separate tracking for income sources
-- Links to Account entity
-- Date-based tracking
+**Income** — Income entries linked to `Account`.
 
-**SavingsPlan**
-- Goal-based savings tracking
-- Target and current amount
-- Monthly tracking
+**SavingsPlan** — Goal tracking (target / current / month).
+
+**UserProfile** — Onboarding completion, name, currency, optional contact fields, profile image data.
 
 ### Technology Stack
 
-- **Framework**: SwiftUI
-- **Persistence**: Core Data
-- **Charts**: Swift Charts (planned)
-- **Architecture**: MVVM pattern
+- **UI**: SwiftUI
+- **Persistence**: Core Data (`TrackSpendture` model)
+- **Charts**: Swift Charts
+- **Pattern**: MVVM-style view models + SwiftUI views
 - **Minimum iOS**: 16.0+
 
 ## 🚀 Getting Started
@@ -133,175 +124,84 @@ cd SpendSight
 open SpendSight.xcodeproj
 ```
 
-3. Build and run
-- Select your target device/simulator
-- Press `Cmd + R` or click the Run button
+3. Build and run  
+   Select a simulator or device, then **⌘R**.
 
-### First Time Setup
+### First Launch
 
-The app will automatically:
-- Initialize Core Data stack
-- Create 10 default categories on first launch
-- Set up persistence layer
+- Core Data loads via `PersistenceController`; if the store fails to open, `DatabaseErrorView` is shown.
+- New users go through **Onboarding** (profile, categories, accounts) before `RootTabView`.
+- Returning users skip onboarding when `hasCompletedOnboarding` is set in `UserDefaults`.
 
 ## 📖 Usage
 
-### Adding a Transaction (Coming Soon)
-1. Tap the "Manual Entry" tab
-2. Enter the amount
-3. Select a category
-4. Choose an account
-5. Add optional notes
-6. Tap "Save"
+### Adding a Transaction
+1. Open the **Manual Entry** tab (or use **+** on the Dashboard).
+2. Enter amount, date, category, account, and optional details.
+3. Save; the transaction appears under **Transactions** and in Dashboard summaries.
 
-### Viewing Transactions (Coming Soon)
-1. Navigate to "Transactions" tab
-2. Use filters to narrow results
-3. Swipe to delete or tap to edit
+### Browsing Transactions
+1. Open the **Transactions** tab.
+2. Use the search field and **filter** control for date, category, account, and amount range.
+3. Swipe for edit/delete, or open a row for details.
 
-### Setting Budgets (Coming Soon)
-1. Go to "Budgets" tab
-2. Select a category
-3. Set monthly budget amount
-4. Track progress throughout the month
+### Dashboard & Budgets
+- **Dashboard**: Period totals and charts update from stored transactions.
+- **Budgets**: Set budgets per category and inspect progress in budget detail views.
+
+### Settings
+- Manage categories and accounts from **Settings**; additional sections cover support and (in DEBUG) tooling.
 
 ## 🛠 Development
 
-### Current Sprint (Week 2: Feb 18-24, 2026)
-**Goal**: Transactions list and dashboard
+### Documentation sync (March 20, 2026)
 
-**Status**: Day 8 of 21 - 🚧 In Progress (Week 1 complete)
+Markdown under the repo root was aligned with the **actual** folder layout (`Models/`, `Views/`, `ViewModels/`, `Managers/`), the **six-entity** Core Data model, and implemented **Transactions**, **Dashboard**, **Budgets**, and **Settings** flows.
 
-- [x] Task 1: Core Data extensions (completed Feb 12)
-- [x] Task 2: Default categories setup (completed Feb 12)
-- [x] Task 3: Manual Entry form (completed Feb 15-17)
-  - [x] Full form UI with validation
-  - [x] Save to Core Data
-  - [x] Onboarding flow (OnboardingView, OnboardingViewModel, OnboardingStepViews, AddAccountSheet)
-  - [x] AppCoordinator (loading → onboarding → main)
+### Guidelines
 
-- [ ] Task 4: Transactions list (Week 2 – in progress)
-  - [ ] Fetch and display transactions
-  - [ ] Transaction row, swipe-to-delete, tap-to-edit
-  - [ ] Filtering and search
+- Prefer small SwiftUI views and shared components under `Views/Features/…`.
+- Use `@FetchRequest` or view models for Core Data reads; save via `CoreData+Save` patterns where used.
+- Avoid force unwraps; handle optional relationships safely.
 
-**Milestone**: Users can view and manage transactions
-
-### Development Guidelines
-
-#### Code Style
-- Use meaningful variable names
-- Follow Swift naming conventions
-- Add comments for complex logic
-- Keep functions focused and small
-
-#### Core Data Best Practices
-- Always check for context changes before saving
-- Use background contexts for heavy operations
-- Implement proper error handling
-- Test cascade delete rules
-- Use guard statements instead of force unwrapping
-
-#### SwiftUI Best Practices
-- Keep views small and composable
-- Extract reusable components
-- Use @StateObject for owned objects
-- Use @ObservedObject for passed objects
-
-### Testing Strategy
-
-1. **Unit Tests** (Planned)
-   - Core Data operations
-   - Business logic
-   - Validation functions
-
-2. **Integration Tests** (Planned)
-   - Data flow between views
-   - Navigation logic
-   - State management
-
-3. **Manual Testing** (Current)
-   - Feature testing as built
-   - Edge case validation
-   - UI/UX verification
+See [Contributing.md](Contributing.md) for branch workflow and commit style.
 
 ## 📝 Roadmap
 
-### Week 1: Foundation (Days 1-7) ✅
-- [x] Day 1: Project planning & documentation (Feb 11)
-- [x] Days 2-3: Core Data extensions (Feb 12)
-- [x] Day 4 scope (default categories seeding) completed early
-- [x] Days 5-7: Manual entry form + onboarding (Feb 15-17)
-
-### Week 2: Core Features (Current - Days 8-14)
-- [ ] Transactions list view (Feb 18+)
-- [ ] Dashboard with charts
-- [ ] Basic filtering
-- [ ] Search functionality
-
-### Week 3: Polish & Budget (Days 15-21)
-- [ ] Budget management
-- [ ] Settings view
-- [ ] Data validation
-- [ ] Final testing
-
-### Phase 2 (Future)
-- [ ] Advanced analytics
-- [ ] Receipt scanning
-- [ ] Bank integration
-- [ ] Cloud sync
+- **Done (high level)**: Data model, onboarding, manual entry, transactions UX, dashboard charts, budgets shell, settings management surfaces.
+- **Next**: Tests, polish, export/backup hardening, then Phase 3 features (widgets, sync, etc.).
 
 ## 🤝 Contributing
 
-This is currently a personal project. If you'd like to contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+Fork, branch, and open a PR. Details: [Contributing.md](Contributing.md).
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License — add a `LICENSE` file at the repository root when publishing if not already present.
 
 ## 👤 Author
 
-**Harwinder Singh**
-- Started: January 2, 2026
-- Status: Active Development (Day 8 of 21)
+**Harwinder Singh**  
+Project started January 2, 2026.
 
 ## 📞 Support
 
-For questions or issues:
-- Create an issue in the GitHub repository
-- Review [PROGRESS_TRACKER.md](PROGRESS_TRACKER.md) for current sprint
-- Check [TODO.md](TODO.md) for task details
-- See [CHANGELOG.md](CHANGELOG.md) for recent updates
+- Open an issue on GitHub.
+- [Progress Tracker.md](Progress%20Tracker.md) — sprint-style progress notes.
+- [TODO.md](TODO.md) — task checklist.
+- [ChangeLog.md](ChangeLog.md) — notable changes.
 
 ## 🙏 Acknowledgments
 
-- SwiftUI documentation and community
-- Core Data best practices from Apple
-- iOS design patterns and guidelines
+- Apple SwiftUI, Core Data, and Swift Charts documentation and samples.
 
 ## 📊 Project Status
 
-**Last Updated**: February 18, 2026
+**Last Updated**: March 20, 2026  
 
-**Current Phase**: Phase 2 - Core Functionality
+**Current Phase**: Phase 2 — core screens implemented; polish and tests ongoing.  
 
-**Current Task**: Transactions list view – fetch, display, and basic interactions
-
-**Sprint**: Week 2, Day 8 of 21
-
-**Next Milestone**: Transactions list with filters and search (Feb 21)
-
-**Target MVP Date**: March 4, 2026
-
-**Latest Update**: Week 1 complete (Manual Entry form, onboarding flow, AppCoordinator). Documentation updated. Starting Week 2: transactions list and dashboard.
+**Latest documentation pass**: Root `.md` files synced to match the codebase layout and features.
 
 ---
 

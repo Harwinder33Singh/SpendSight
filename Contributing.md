@@ -10,7 +10,7 @@ Thank you for your interest in contributing to SpendSight! This document provide
 - [Commit Guidelines](#commit-guidelines)
 - [Pull Request Process](#pull-request-process)
 
-**Last Updated**: February 18, 2026
+**Last Updated**: March 20, 2026
 
 ## Code of Conduct
 
@@ -332,7 +332,8 @@ git diff main...your-feature-branch
 4. **Update Documentation**
 - [ ] README.md (if needed)
 - [ ] TODO.md (check off completed items)
-- [ ] CHANGELOG.md (add your changes)
+- [ ] ChangeLog.md (add your changes)
+- [ ] Progress Tracker.md (if tracking sprint progress)
 - [ ] Code comments and documentation
 
 ### Creating a Pull Request
