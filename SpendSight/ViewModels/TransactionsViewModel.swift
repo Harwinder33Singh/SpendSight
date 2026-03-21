@@ -8,6 +8,9 @@
 import SwiftUI
 import CoreData
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.harwinder.SpendSight", category: "TransactionsViewModel")
 
 @MainActor
 class TransactionsViewModel: ObservableObject {
@@ -209,7 +212,7 @@ class TransactionsViewModel: ObservableObject {
         do {
             try context.save()
         } catch {
-            // Handle deletion error silently
+            logger.error("Failed to delete transaction: \(error.localizedDescription)")
         }
     }
 }
@@ -238,33 +241,33 @@ enum DateFilter: String, CaseIterable, Identifiable {
             
         case .today:
             let start = calendar.startOfDay(for: now)
-            let end = calendar.date(byAdding: .day, value: 1, to: start)!
+            let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start
             return (start, end)
-            
+
         case .yesterday:
-            let start = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: now))!
+            let start = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: now)) ?? now
             let end = calendar.startOfDay(for: now)
             return (start, end)
-            
+
         case .thisWeek:
-            let start = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
-            let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start)!
+            let start = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? now
+            let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start) ?? start
             return (start, end)
-            
+
         case .lastWeek:
-            let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
-            let start = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart)!
+            let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? now
+            let start = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart) ?? now
             let end = thisWeekStart
             return (start, end)
-            
+
         case .thisMonth:
-            let start = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
-            let end = calendar.date(byAdding: .month, value: 1, to: start)!
+            let start = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? now
+            let end = calendar.date(byAdding: .month, value: 1, to: start) ?? start
             return (start, end)
-            
+
         case .lastMonth:
-            let thisMonthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
-            let start = calendar.date(byAdding: .month, value: -1, to: thisMonthStart)!
+            let thisMonthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? now
+            let start = calendar.date(byAdding: .month, value: -1, to: thisMonthStart) ?? now
             let end = thisMonthStart
             return (start, end)
             

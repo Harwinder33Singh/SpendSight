@@ -8,6 +8,9 @@
 import SwiftUI
 import CoreData
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.harwinder.SpendSight", category: "AppCoordinator")
 
 @MainActor
 class AppCoordinator: ObservableObject {
@@ -21,17 +24,16 @@ class AppCoordinator: ObservableObject {
     }
     
     // MARK: - App State Management
-    
-    func checkAppState() {
-        // Check if onboarding is complete
-        let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        
-        if !hasCompletedOnboarding {
-            appState = .onboarding
+
+    func checkAppState(coreDataError: Error? = nil) {
+        if let error = coreDataError {
+            logger.critical("Core Data failed to load: \(error.localizedDescription)")
+            appState = .failed(error.localizedDescription)
             return
         }
-        
-        appState = .main
+
+        let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        appState = hasCompletedOnboarding ? .main : .onboarding
     }
     
     // MARK: - Onboarding
@@ -83,7 +85,7 @@ class AppCoordinator: ObservableObject {
             try context.execute(deleteAccounts)
             try context.save()
         } catch {
-            // Handle deletion error silently
+            logger.error("Failed to delete all user data during logout: \(error.localizedDescription)")
         }
     }
 }
@@ -94,4 +96,5 @@ enum AppState {
     case loading
     case onboarding
     case main
+    case failed(String)
 }

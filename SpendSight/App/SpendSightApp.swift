@@ -11,7 +11,7 @@
 //@main
 //struct SpendSightApp: App {
 //    let persistenceController = PersistenceController.shared
-//    
+//
 //    var body: some Scene {
 //        WindowGroup {
 //            RootTabView()
@@ -47,23 +47,55 @@ struct SpendSightApp: App {
                 switch coordinator.appState {
                 case .loading:
                     LoadingView()
-                    
+
                 case .onboarding:
                     OnboardingView(context: persistenceController.container.viewContext) {
                         coordinator.completeOnboarding()
                     }
-                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                    
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+
                 case .main:
                     RootTabView()
                         .environment(\.managedObjectContext, persistenceController.container.viewContext)
                         .environmentObject(coordinator)
+
+                case .failed(let message):
+                    DatabaseErrorView(message: message)
                 }
             }
             .onAppear {
-                coordinator.checkAppState()
+                coordinator.checkAppState(coreDataError: persistenceController.loadError)
             }
         }
+    }
+}
+
+// MARK: - Database Error View
+
+struct DatabaseErrorView: View {
+    let message: String
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 60, height: 60)
+                .foregroundStyle(.red)
+
+            Text("Unable to Load Data")
+                .font(.title2.bold())
+
+            Text("SpendSight could not open its database. Please restart the app. If the problem persists, reinstalling may resolve it.")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+
+            Text(message)
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
     }
 }
 

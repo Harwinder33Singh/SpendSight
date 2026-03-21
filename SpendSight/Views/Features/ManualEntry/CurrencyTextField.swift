@@ -48,19 +48,28 @@ struct CurrencyTextField: View {
 }
 
 private func sanitizeCurrency(input: String) -> String {
-    // Allow digits and one decimal separator, limit to 2 decimals
+    // Allow digits and one decimal separator; limit to 8 integer digits and 2 decimal places.
+    // Strips minus signs and any other non-numeric characters so negative amounts are impossible.
     let decimalSeparator = Locale.current.decimalSeparator ?? "."
+    let maxIntegerDigits = 8  // caps at 99,999,999
     var filtered = ""
     var hasSeparator = false
     var decimals = 0
+    var integers = 0
     for c in input {
         if c.isNumber {
-            if hasSeparator { decimals += 1}
-            if decimals <= 2 { filtered.append(c)}
+            if hasSeparator {
+                decimals += 1
+                if decimals <= 2 { filtered.append(c) }
+            } else {
+                integers += 1
+                if integers <= maxIntegerDigits { filtered.append(c) }
+            }
         } else if String(c) == decimalSeparator && !hasSeparator {
             hasSeparator = true
             filtered.append(c)
         }
+        // All other characters (including '-') are silently dropped.
     }
     return filtered
 }

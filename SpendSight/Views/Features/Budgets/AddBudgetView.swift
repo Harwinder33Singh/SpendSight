@@ -52,6 +52,9 @@ struct AddBudgetView: View {
                             TextField("0", text: $budgetAmount)
                                 .keyboardType(.decimalPad)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .onChange(of: budgetAmount) { _, newValue in
+                                    budgetAmount = sanitizeBudgetInput(newValue)
+                                }
                         }
                     }
 
@@ -101,9 +104,10 @@ struct AddBudgetView: View {
     }
 
     private var canSave: Bool {
-        guard let _ = selectedCategory,
+        guard selectedCategory != nil,
               let amount = Double(budgetAmount),
-              amount > 0 else {
+              amount > 0,
+              amount <= 9_999_999.99 else {
             return false
         }
         return true
@@ -114,6 +118,11 @@ struct AddBudgetView: View {
               let amount = Double(budgetAmount),
               amount > 0 else {
             showError(message: "Please select a category and enter a valid budget amount.")
+            return
+        }
+
+        guard amount <= 9_999_999.99 else {
+            showError(message: "Budget amount cannot exceed \(formatCurrency(9_999_999.99)).")
             return
         }
 
@@ -130,6 +139,35 @@ struct AddBudgetView: View {
     private func showError(message: String) {
         errorMessage = message
         showError = true
+    }
+
+    // MARK: - Input Sanitization
+
+    /// Strips non-numeric characters (including minus signs) and enforces
+    /// 8 integer digits max and 2 decimal places, preventing negative or
+    /// unreasonably large budget amounts.
+    private func sanitizeBudgetInput(_ input: String) -> String {
+        let decimalSeparator = Locale.current.decimalSeparator ?? "."
+        let maxIntegerDigits = 8
+        var filtered = ""
+        var hasSeparator = false
+        var decimals = 0
+        var integers = 0
+        for c in input {
+            if c.isNumber {
+                if hasSeparator {
+                    decimals += 1
+                    if decimals <= 2 { filtered.append(c) }
+                } else {
+                    integers += 1
+                    if integers <= maxIntegerDigits { filtered.append(c) }
+                }
+            } else if String(c) == decimalSeparator && !hasSeparator {
+                hasSeparator = true
+                filtered.append(c)
+            }
+        }
+        return filtered
     }
 
     private func formatCurrency(_ amount: Double) -> String {
