@@ -90,72 +90,268 @@ struct FeatureRow: View {
 
 struct PersonalInfoStepView: View {
     @ObservedObject var viewModel: OnboardingViewModel
-    
+    @FocusState private var focusedField: FocusedField?
+
+    enum FocusedField {
+        case name, email, phone
+    }
+
     var body: some View {
-        VStack(spacing: 24) {
-            // Header
-            VStack(spacing: 8) {
-                Text("Personal Information")
-                    .font(.title)
-                    .fontWeight(.bold)
-                
-                Text("Tell us a bit about yourself")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.bottom)
-            
-            // Form fields
-            VStack(spacing: 16) {
-                // Name (required)
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Full Name *", systemImage: "person.fill")
-                        .font(.headline)
-                    
-                    TextField("Enter your name", text: $viewModel.fullName)
-                        .textFieldStyle(.roundedBorder)
-                        .textInputAutocapitalization(.words)
-                }
-                
-                // Email (optional)
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Email", systemImage: "envelope.fill")
-                        .font(.headline)
-                    
-                    TextField("Enter your email", text: $viewModel.email)
-                        .textFieldStyle(.roundedBorder)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.emailAddress)
-                }
-                
-                // Phone (optional)
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Phone", systemImage: "phone.fill")
-                        .font(.headline)
-                    
-                    TextField("Enter your phone number", text: $viewModel.phone)
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.phonePad)
-                }
-                
-                // Currency selection
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Preferred Currency *", systemImage: "dollarsign.circle.fill")
-                        .font(.headline)
-                    
-                    Picker("Currency", selection: $viewModel.selectedCurrency) {
-                        ForEach(viewModel.availableCurrencies, id: \.self) { currency in
-                            Text(currency).tag(currency)
-                        }
+        ScrollView {
+            VStack(spacing: 0) {
+                // Hero section with gradient background
+                VStack(spacing: 16) {
+                    // Animated profile icon
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.blue.opacity(0.2), .purple.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 100, height: 100)
+
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.blue, .purple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                     }
-                    .pickerStyle(.segmented)
+                    .padding(.top, 20)
+
+                    VStack(spacing: 8) {
+                        Text("Personal Information")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(.primary)
+
+                        Text("Tell us a bit about yourself")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
                 }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 40)
+
+                // Form section
+                VStack(spacing: 24) {
+                    // Name field
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.blue)
+                                .frame(width: 20)
+
+                            Text("Full Name")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.primary)
+
+                            Text("*")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.red)
+
+                            Spacer()
+                        }
+
+                        TextField("Enter your name", text: $viewModel.fullName)
+                            .font(.system(size: 16))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                focusedField == .name ? Color.blue : Color.clear,
+                                                lineWidth: 2
+                                            )
+                                    )
+                            )
+                            .textInputAutocapitalization(.words)
+                            .focused($focusedField, equals: .name)
+                    }
+
+                    // Email field
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "envelope.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.green)
+                                .frame(width: 20)
+
+                            Text("Email")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.primary)
+
+                            Text("optional")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule()
+                                        .fill(Color(.systemGray5))
+                                )
+
+                            Spacer()
+                        }
+
+                        TextField("Enter your email", text: $viewModel.email)
+                            .font(.system(size: 16))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                focusedField == .email ? Color.green : Color.clear,
+                                                lineWidth: 2
+                                            )
+                                    )
+                            )
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.emailAddress)
+                            .focused($focusedField, equals: .email)
+                    }
+
+                    // Phone field
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "phone.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.orange)
+                                .frame(width: 20)
+
+                            Text("Phone")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.primary)
+
+                            Text("optional")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule()
+                                        .fill(Color(.systemGray5))
+                                )
+
+                            Spacer()
+                        }
+
+                        TextField("Enter your phone number", text: $viewModel.phone)
+                            .font(.system(size: 16))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                focusedField == .phone ? Color.orange : Color.clear,
+                                                lineWidth: 2
+                                            )
+                                    )
+                            )
+                            .keyboardType(.phonePad)
+                            .focused($focusedField, equals: .phone)
+                    }
+
+                    // Currency selection with enhanced design
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.purple)
+                                .frame(width: 20)
+
+                            Text("Preferred Currency")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.primary)
+
+                            Text("*")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.red)
+
+                            Spacer()
+                        }
+
+                        // Custom currency picker with enhanced styling
+                        HStack(spacing: 0) {
+                            ForEach(Array(viewModel.availableCurrencies.enumerated()), id: \.element) { index, currency in
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        viewModel.selectedCurrency = currency
+                                    }
+                                } label: {
+                                    Text(currency)
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundStyle(
+                                            viewModel.selectedCurrency == currency ? .white : .primary
+                                        )
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(
+                                                    viewModel.selectedCurrency == currency
+                                                    ? LinearGradient(
+                                                        colors: [.blue, .purple],
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    )
+                                                    : LinearGradient(
+                                                        colors: [Color(.systemGray6)],
+                                                        startPoint: .leading,
+                                                        endPoint: .trailing
+                                                    )
+                                                )
+                                                .shadow(
+                                                    color: viewModel.selectedCurrency == currency
+                                                    ? .blue.opacity(0.3) : .clear,
+                                                    radius: viewModel.selectedCurrency == currency ? 4 : 0,
+                                                    x: 0,
+                                                    y: 2
+                                                )
+                                        )
+                                }
+                            }
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(.systemGray5))
+                        )
+                        .padding(2)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 40)
             }
-            .padding()
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            
-            Spacer()
+        }
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(.systemBackground),
+                    Color(.systemBackground).opacity(0.8),
+                    Color(.systemGray6).opacity(0.3)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .onTapGesture {
+            focusedField = nil
         }
     }
 }
