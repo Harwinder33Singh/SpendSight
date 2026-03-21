@@ -72,12 +72,7 @@ extension Transaction {
     
     /// Returns a formatted amount string with currency symbol
     var formattedAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: amount)) else { return "0.00" }
-        return amount
+        return CurrencyService.shared.formatAmount(amount)
     }
     
     /// Returns the category name or "Uncategorized" if category is nil
@@ -107,12 +102,7 @@ extension Transaction {
     
     /// Returns a formatted absolute amount (always positive)
     var formattedAbsoluteAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: absoluteAmount)) else { return "0.00" }
-        return amount
+        return CurrencyService.shared.formatAmount(absoluteAmount)
     }
     
     // MARK: - Fetch Request Builder

@@ -32,6 +32,10 @@ class AppCoordinator: ObservableObject {
             return
         }
 
+        // Initialize services
+        _ = CurrencyService.shared
+        _ = BudgetMonitorService.shared
+
         let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
         appState = hasCompletedOnboarding ? .main : .onboarding
     }

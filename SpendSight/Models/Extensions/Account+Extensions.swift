@@ -209,15 +209,7 @@ extension Account {
     
     /// Get formatted balance string
     var formattedBalance: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        
-        guard let balance = formatter.string(from: NSNumber(value: currentBalance)) else {
-            return "$0.00"
-        }
-        return balance
+        return CurrencyService.shared.formatAmount(currentBalance)
     }
     
     /// Calculate total expenses for this account

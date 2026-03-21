@@ -59,38 +59,17 @@ extension SavingsPlan {
     
     /// Returns a formatted target amount string with currency symbol
     var formattedTargetAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: targetAmount)) else {
-            return "$0.00"
-        }
-        return amount
+        return CurrencyService.shared.formatAmount(targetAmount)
     }
     
     /// Returns a formatted current amount string with currency symbol
     var formattedCurrentAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: currentAmount)) else {
-            return "$0.00"
-        }
-        return amount
+        return CurrencyService.shared.formatAmount(currentAmount)
     }
     
     /// Returns a formatted remaining amount string with currency symbol
     var formattedRemainingAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: remainingAmount)) else {
-            return "$0.00"
-        }
-        return amount
+        return CurrencyService.shared.formatAmount(remainingAmount)
     }
     
     /// Returns a display month string (e.g., "February 2026")

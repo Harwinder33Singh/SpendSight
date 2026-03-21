@@ -61,14 +61,7 @@ extension Category {
     
     /// Returns formatted budget string
     var formattedBudget: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let budget = formatter.string(from: NSNumber(value: monthlyBudget ?? 0)) else {
-            return "$0.00"
-        }
-        return budget
+        return CurrencyService.shared.formatAmount(monthlyBudget ?? 0)
     }
     
     /// Returns the number of transactions in this category

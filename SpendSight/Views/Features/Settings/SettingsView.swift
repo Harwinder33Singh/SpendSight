@@ -333,8 +333,22 @@ struct SettingsView: View {
     // MARK: - Helper Functions
 
     private func exportData() {
-        // CSV export functionality - to be implemented
-        let _ = try? context.fetch(Transaction.fetchRequest())
+        ExportService.shared.exportTransactionsToCSV(context: context) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let url):
+                    // Present share sheet
+                    let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first {
+                        window.rootViewController?.present(activityViewController, animated: true)
+                    }
+                case .failure(let error):
+                    // Could show an alert here, but keeping it simple for now
+                    print("Export failed: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 
     private func openContactSupport() {
@@ -683,11 +697,7 @@ struct AccountInfoView: View {
     }
 
     private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = defaultCurrency
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: amount)) ?? "\(defaultCurrency) 0"
+        return CurrencyService.shared.formatAmountWithoutDecimals(amount)
     }
 
     private func syncWithUserProfile() {
@@ -712,44 +722,224 @@ struct AccountInfoView: View {
             )
 
             try context.save()
+
+            // Update the currency service
+            CurrencyService.shared.updateCurrency(defaultCurrency)
         } catch {
             // Handle sync errors silently
         }
     }
 
     private func exportUserData() {
-        // Data export functionality - to be implemented
+        ExportService.shared.exportDataToJSON(context: context) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let url):
+                    // Present share sheet
+                    let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first {
+                        window.rootViewController?.present(activityViewController, animated: true)
+                    }
+                case .failure(let error):
+                    print("Export failed: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 }
 
 struct NotificationSettingsView: View {
+    @StateObject private var notificationService = NotificationService.shared
+    @AppStorage("enableBudgetNotifications") private var enableBudgetNotifications = true
+    @AppStorage("enableDailyReminders") private var enableDailyReminders = false
+
     var body: some View {
         NavigationView {
-            VStack {
-                Text("Notification Settings")
-                    .font(.title)
-                Text("Notification preferences coming soon")
-                    .foregroundStyle(.secondary)
+            Form {
+                Section {
+                    if !notificationService.isAuthorized {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Notifications Disabled")
+                                .font(.headline)
+                                .foregroundStyle(.red)
+
+                            Text("To receive budget alerts and reminders, please allow notifications in your device settings.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+
+                            Button("Open Settings") {
+                                openAppSettings()
+                            }
+                            .foregroundStyle(.blue)
+                        }
+                        .padding(.vertical, 4)
+                    } else {
+                        Label("Notifications Enabled", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    }
+                } header: {
+                    Text("Permission Status")
+                }
+
+                Section {
+                    Toggle(isOn: $enableBudgetNotifications) {
+                        VStack(alignment: .leading) {
+                            Text("Budget Alerts")
+                            Text("Get notified when you reach 80% and 100% of your budget")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .disabled(!notificationService.isAuthorized)
+
+                    Toggle(isOn: $enableDailyReminders) {
+                        VStack(alignment: .leading) {
+                            Text("Daily Reminders")
+                            Text("Daily reminder at 7 PM to log your expenses")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .disabled(!notificationService.isAuthorized)
+                    .onChange(of: enableDailyReminders) { oldValue, newValue in
+                        if newValue {
+                            notificationService.scheduleRecurringReminder()
+                        } else {
+                            // Remove daily reminders
+                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["daily_reminder"])
+                        }
+                    }
+                } header: {
+                    Text("Notification Types")
+                } footer: {
+                    Text("Budget notifications will be sent when you exceed spending thresholds for categories with budgets set.")
+                }
+
+                Section {
+                    Button("Test Budget Notification") {
+                        testBudgetNotification()
+                    }
+                    .disabled(!notificationService.isAuthorized)
+
+                    Button("Clear All Notifications") {
+                        notificationService.cancelAllNotifications()
+                    }
+                    .foregroundStyle(.red)
+                } header: {
+                    Text("Testing & Management")
+                }
             }
             .navigationTitle("Notifications")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                if !notificationService.isAuthorized {
+                    notificationService.requestPermission()
+                }
+            }
         }
+    }
+
+    private func openAppSettings() {
+        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(settingsUrl)
+        }
+    }
+
+    private func testBudgetNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Test Budget Alert"
+        content.body = "This is a test notification to verify budget alerts are working."
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "test_notification", content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request)
     }
 }
 
 
 
 struct BackupSettingsView: View {
+    @Environment(\.managedObjectContext) private var context
+
     var body: some View {
         NavigationView {
-            VStack {
-                Text("Backup & Sync")
-                    .font(.title)
-                Text("iCloud sync coming soon")
-                    .foregroundStyle(.secondary)
+            Form {
+                Section {
+                    Button {
+                        exportData()
+                    } label: {
+                        HStack {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundStyle(.blue)
+                                .frame(width: 24)
+                            Text("Export All Data (JSON)")
+                            Spacer()
+                        }
+                    }
+
+                    Button {
+                        exportTransactions()
+                    } label: {
+                        HStack {
+                            Image(systemName: "tablecells")
+                                .foregroundStyle(.green)
+                                .frame(width: 24)
+                            Text("Export Transactions (CSV)")
+                            Spacer()
+                        }
+                    }
+                } header: {
+                    Text("Export Options")
+                } footer: {
+                    Text("Export your data for backup or use in other applications")
+                }
+
+                Section {
+                    Text("iCloud synchronization will be available in a future update")
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Cloud Sync")
+                }
             }
             .navigationTitle("Backup & Sync")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private func exportData() {
+        ExportService.shared.exportDataToJSON(context: context) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let url):
+                    presentShareSheet(with: url)
+                case .failure(let error):
+                    print("Export failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    private func exportTransactions() {
+        ExportService.shared.exportTransactionsToCSV(context: context) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let url):
+                    presentShareSheet(with: url)
+                case .failure(let error):
+                    print("Export failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    private func presentShareSheet(with url: URL) {
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController?.present(activityViewController, animated: true)
         }
     }
 }

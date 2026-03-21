@@ -59,14 +59,7 @@ extension Income {
     
     /// Returns a formatted amount string with currency symbol
     var formattedAmount: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = Locale.current.currencySymbol ?? "$"
-        formatter.maximumFractionDigits = 2
-        guard let amount = formatter.string(from: NSNumber(value: amount)) else {
-            return "$0.00"
-        }
-        return amount
+        return CurrencyService.shared.formatAmount(amount)
     }
     
     /// Returns account name or a fallback if account is nil

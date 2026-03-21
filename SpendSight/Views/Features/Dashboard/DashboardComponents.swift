@@ -46,11 +46,7 @@ struct SummaryCard: View {
     }
     
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: value)) ?? "$0"
+        return CurrencyService.shared.formatAmountWithoutDecimals(value)
     }
 }
 
@@ -172,11 +168,7 @@ struct CategorySpendingChart: View {
     }
     
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: value)) ?? "$0"
+        return CurrencyService.shared.formatAmountWithoutDecimals(value)
     }
     
     private func categoryID(for category: Category) -> String {
@@ -333,11 +325,7 @@ struct SpendingTrendChart: View {
     }
     
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 2
-        return formatter.string(from: NSNumber(value: value)) ?? "$0"
+        return CurrencyService.shared.formatAmount(value)
     }
 }
 
@@ -426,11 +414,7 @@ struct BudgetProgressRow: View {
     }
     
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: value)) ?? "$0"
+        return CurrencyService.shared.formatAmountWithoutDecimals(value)
     }
 }
 
