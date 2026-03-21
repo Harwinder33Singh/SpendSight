@@ -13,13 +13,13 @@ import StoreKit
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var context
     @Environment(\.requestReview) private var requestReview
+    @AppStorage("userName") private var userName: String = ""
     @State private var showDeleteConfirmation = false
     @State private var showMailComposer = false
     @State private var showAccountInfo = false
     @State private var showNotifications = false
-    @State private var showAppearance = false
-    @State private var showCurrency = false
-    @State private var showBudgetSettings = false
+    @State private var showCategoryManagement = false
+    @State private var showAccountManagement = false
     @State private var showBackupSettings = false
     @State private var showHelpCenter = false
     @State private var showPrivacyPolicy = false
@@ -59,14 +59,13 @@ struct SettingsView: View {
             .sheet(isPresented: $showNotifications) {
                 NotificationSettingsView()
             }
-            .sheet(isPresented: $showAppearance) {
-                AppearanceSettingsView()
+            .sheet(isPresented: $showCategoryManagement) {
+                CategoryManagementView()
+                    .environment(\.managedObjectContext, context)
             }
-            .sheet(isPresented: $showCurrency) {
-                CurrencySettingsView()
-            }
-            .sheet(isPresented: $showBudgetSettings) {
-                BudgetSettingsView()
+            .sheet(isPresented: $showAccountManagement) {
+                AccountManagementView()
+                    .environment(\.managedObjectContext, context)
             }
             .sheet(isPresented: $showBackupSettings) {
                 BackupSettingsView()
@@ -104,7 +103,7 @@ struct SettingsView: View {
                 SettingsRow(
                     icon: "person.circle",
                     title: "Account Info",
-                    subtitle: "Manage your profile",
+                    subtitle: userName.isEmpty ? "Set up your profile" : userName,
                     iconColor: .blue
                 ) {
                     showAccountInfo = true
@@ -140,36 +139,24 @@ struct SettingsView: View {
 
             VStack(spacing: 0) {
                 SettingsRow(
-                    icon: "paintbrush",
-                    title: "Appearance",
-                    subtitle: "Theme and display options",
-                    iconColor: .purple
+                    icon: "tag.fill",
+                    title: "Manage Categories",
+                    subtitle: "Add, edit, and organize categories",
+                    iconColor: .blue
                 ) {
-                    showAppearance = true
+                    showCategoryManagement = true
                 }
 
                 Divider()
                     .padding(.leading, 44)
 
                 SettingsRow(
-                    icon: "dollarsign.circle",
-                    title: "Currency",
-                    subtitle: "USD - United States Dollar",
+                    icon: "building.columns.fill",
+                    title: "Manage Accounts",
+                    subtitle: "Add, edit, and remove bank accounts",
                     iconColor: .green
                 ) {
-                    showCurrency = true
-                }
-
-                Divider()
-                    .padding(.leading, 44)
-
-                SettingsRow(
-                    icon: "chart.bar",
-                    title: "Budget Settings",
-                    subtitle: "Default budgets and limits",
-                    iconColor: .indigo
-                ) {
-                    showBudgetSettings = true
+                    showAccountManagement = true
                 }
             }
             .background(
@@ -346,9 +333,8 @@ struct SettingsView: View {
     // MARK: - Helper Functions
 
     private func exportData() {
-        // TODO: Implement CSV export functionality
-        let transactions = try? context.fetch(Transaction.fetchRequest())
-        print("Exporting \(transactions?.count ?? 0) transactions to CSV")
+        // CSV export functionality - to be implemented
+        let _ = try? context.fetch(Transaction.fetchRequest())
     }
 
     private func openContactSupport() {
@@ -396,9 +382,7 @@ struct SettingsView: View {
 
     private func runDebugSmokeTest() {
         let stamp = Int(Date().timeIntervalSince1970)
-        
-        print("\n========== DEBUG SMOKE TEST START ==========")
-        
+
         let account = Account(
             context: context,
             name: "Debug Checking \(stamp)",
@@ -406,7 +390,7 @@ struct SettingsView: View {
             institution: "Debug Bank",
             last4: "1234"
         )
-        
+
         let category = Category(
             context: context,
             name: "Debug Food \(stamp)",
@@ -414,14 +398,14 @@ struct SettingsView: View {
             icon: "fork.knife",
             monthlyBudget: 300
         )
-        
+
         let income = Income(
             context: context,
             amount: 2500,
             source: "Debug Salary \(stamp)",
             account: account
         )
-        
+
         let transaction = Transaction(
             context: context,
             amount: -42.50,
@@ -431,67 +415,310 @@ struct SettingsView: View {
             category: category,
             account: account
         )
-        
+
         let savings = SavingsPlan(
             context: context,
             targetAmount: 1000,
             currentAmount: 250,
             notes: "Debug Plan \(stamp)"
         )
-        
+
         context.saveIfNeeded()
-        
+
+        // Validate entities
         do {
             try account.validate()
             try category.validate()
             try income.validate()
             try transaction.validate()
             try savings.validate()
-            print("Validation: PASS")
         } catch {
-            print("Validation: FAIL -> \(error.localizedDescription)")
+            // Handle validation errors silently
         }
-        
-        print("Category formatted budget: \(category.formattedBudget)")
-        print("Account display name: \(account.displayName)")
-        print("Income formatted amount: \(income.formattedAmount)")
-        print("Transaction formatted amount: \(transaction.formattedAmount)")
-        print("Savings progress: \(savings.progressPercentage)")
-        
+
+        // Test fetch operations
         do {
-            let accounts = try context.fetch(Account.fetchByName(account.name ?? ""))
-            let categories = try context.fetch(Category.fetchByName(category.name ?? ""))
-            let incomes = try context.fetch(Income.fetchBySource(income.source ?? ""))
-            let transactions = try context.fetch(Transaction.fetchRequest(account: account))
-            let activeSavings = try context.fetch(SavingsPlan.fetchActivePlans())
-            
-            print("Fetch Account by name: \(accounts.isEmpty ? "FAIL" : "PASS")")
-            print("Fetch Category by name: \(categories.isEmpty ? "FAIL" : "PASS")")
-            print("Fetch Income by source: \(incomes.isEmpty ? "FAIL" : "PASS")")
-            print("Fetch Transaction by account: \(transactions.isEmpty ? "FAIL" : "PASS")")
-            print("Fetch Active Savings: \(activeSavings.isEmpty ? "FAIL" : "PASS")")
+            let _ = try context.fetch(Account.fetchByName(account.name ?? ""))
+            let _ = try context.fetch(Category.fetchByName(category.name ?? ""))
+            let _ = try context.fetch(Income.fetchBySource(income.source ?? ""))
+            let _ = try context.fetch(Transaction.fetchRequest(account: account))
+            let _ = try context.fetch(SavingsPlan.fetchActivePlans())
         } catch {
-            print("Fetch: FAIL -> \(error.localizedDescription)")
+            // Handle fetch errors silently
         }
-        
-        print("========== DEBUG SMOKE TEST END ==========\n")
     }
 }
 
 // MARK: - Placeholder Views
 
 struct AccountInfoView: View {
+    @Environment(\.managedObjectContext) private var context
+    @AppStorage("userName") private var userName: String = ""
+    @AppStorage("userEmail") private var userEmail: String = ""
+    @AppStorage("userPhone") private var userPhone: String = ""
+    @AppStorage("defaultCurrency") private var defaultCurrency: String = "USD"
+    @AppStorage("enableNotifications") private var enableNotifications: Bool = true
+    @AppStorage("enableBiometric") private var enableBiometric: Bool = false
+    @AppStorage("monthlyBudgetGoal") private var monthlyBudgetGoalString: String = ""
+
+    @State private var isEditing: Bool = false
+    @State private var showingImagePicker: Bool = false
+    @State private var profileImage: UIImage?
+
+    private let currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "INR", "CNY"]
+
+    var monthlyBudgetGoal: Double {
+        get { Double(monthlyBudgetGoalString) ?? 0.0 }
+        set { monthlyBudgetGoalString = String(newValue) }
+    }
+
     var body: some View {
         NavigationView {
-            VStack {
-                Text("Account Information")
-                    .font(.title)
-                Text("Profile management coming soon")
-                    .foregroundStyle(.secondary)
+            Form {
+                Section {
+                    HStack {
+                        Button {
+                            showingImagePicker = true
+                        } label: {
+                            if let profileImage = profileImage {
+                                Image(uiImage: profileImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 80))
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            if isEditing {
+                                TextField("Your Name", text: $userName)
+                                    .textFieldStyle(.roundedBorder)
+                                    .textInputAutocapitalization(.words)
+                            } else {
+                                Text(userName.isEmpty ? "Tap to add name" : userName)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(userName.isEmpty ? .secondary : .primary)
+                            }
+
+                            Text("SpendSight User")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
+                } header: {
+                    Text("Profile")
+                }
+
+                Section {
+                    HStack {
+                        Image(systemName: "envelope")
+                            .foregroundStyle(.blue)
+                            .frame(width: 24)
+
+                        if isEditing {
+                            TextField("Email Address", text: $userEmail)
+                                .keyboardType(.emailAddress)
+                                .textInputAutocapitalization(.never)
+                        } else {
+                            VStack(alignment: .leading) {
+                                Text("Email")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(userEmail.isEmpty ? "Not set" : userEmail)
+                                    .foregroundStyle(userEmail.isEmpty ? .secondary : .primary)
+                            }
+                        }
+                    }
+
+                    HStack {
+                        Image(systemName: "phone")
+                            .foregroundStyle(.green)
+                            .frame(width: 24)
+
+                        if isEditing {
+                            TextField("Phone Number", text: $userPhone)
+                                .keyboardType(.phonePad)
+                        } else {
+                            VStack(alignment: .leading) {
+                                Text("Phone")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(userPhone.isEmpty ? "Not set" : userPhone)
+                                    .foregroundStyle(userPhone.isEmpty ? .secondary : .primary)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Contact Information")
+                }
+
+                Section {
+                    HStack {
+                        Image(systemName: "dollarsign.circle")
+                            .foregroundStyle(.orange)
+                            .frame(width: 24)
+
+                        Text("Default Currency")
+
+                        Spacer()
+
+                        if isEditing {
+                            Picker("Currency", selection: $defaultCurrency) {
+                                ForEach(currencies, id: \.self) { currency in
+                                    Text(currency).tag(currency)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        } else {
+                            Text(defaultCurrency)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    HStack {
+                        Image(systemName: "target")
+                            .foregroundStyle(.purple)
+                            .frame(width: 24)
+
+                        if isEditing {
+                            VStack(alignment: .leading) {
+                                Text("Monthly Budget Goal")
+                                TextField("0", text: $monthlyBudgetGoalString)
+                                    .keyboardType(.decimalPad)
+                            }
+                        } else {
+                            VStack(alignment: .leading) {
+                                Text("Monthly Budget Goal")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(monthlyBudgetGoal > 0 ? formatCurrency(monthlyBudgetGoal) : "Not set")
+                                    .foregroundStyle(monthlyBudgetGoal > 0 ? .primary : .secondary)
+                            }
+                        }
+
+                        Spacer()
+                    }
+                } header: {
+                    Text("Preferences")
+                }
+
+                Section {
+                    Toggle(isOn: $enableNotifications) {
+                        HStack {
+                            Image(systemName: "bell")
+                                .foregroundStyle(.red)
+                                .frame(width: 24)
+                            Text("Push Notifications")
+                        }
+                    }
+
+                    Toggle(isOn: $enableBiometric) {
+                        HStack {
+                            Image(systemName: "faceid")
+                                .foregroundStyle(.blue)
+                                .frame(width: 24)
+                            Text("Biometric Authentication")
+                        }
+                    }
+                } header: {
+                    Text("Security & Privacy")
+                } footer: {
+                    Text("Enable biometric authentication for secure app access")
+                }
+
+                Section {
+                    Button {
+                        exportUserData()
+                    } label: {
+                        HStack {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundStyle(.blue)
+                                .frame(width: 24)
+                            Text("Export Account Data")
+                            Spacer()
+                        }
+                    }
+
+                    Button(role: .destructive) {
+                        // Account deletion functionality - to be implemented
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                                .frame(width: 24)
+                            Text("Delete Account")
+                            Spacer()
+                        }
+                    }
+                } header: {
+                    Text("Data Management")
+                } footer: {
+                    Text("Export your data or permanently delete your account")
+                }
             }
             .navigationTitle("Account Info")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(isEditing ? "Done" : "Edit") {
+                        withAnimation {
+                            if isEditing {
+                                // Save changes when exiting edit mode
+                                syncWithUserProfile()
+                            }
+                            isEditing.toggle()
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private func formatCurrency(_ amount: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = defaultCurrency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: amount)) ?? "\(defaultCurrency) 0"
+    }
+
+    private func syncWithUserProfile() {
+        // Update UserProfile in Core Data when Account Info changes
+        let request = UserProfile.fetchCurrentUser()
+
+        do {
+            let profiles = try context.fetch(request)
+            let userProfile = profiles.first ?? UserProfile(
+                context: context,
+                fullName: userName,
+                email: userEmail.isEmpty ? nil : userEmail,
+                phone: userPhone.isEmpty ? nil : userPhone,
+                currency: defaultCurrency
+            )
+
+            userProfile.updateProfile(
+                fullName: userName,
+                email: userEmail.isEmpty ? nil : userEmail,
+                phone: userPhone.isEmpty ? nil : userPhone,
+                currency: defaultCurrency
+            )
+
+            try context.save()
+        } catch {
+            // Handle sync errors silently
+        }
+    }
+
+    private func exportUserData() {
+        // Data export functionality - to be implemented
     }
 }
 
@@ -510,50 +737,7 @@ struct NotificationSettingsView: View {
     }
 }
 
-struct AppearanceSettingsView: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Appearance Settings")
-                    .font(.title)
-                Text("Theme options coming soon")
-                    .foregroundStyle(.secondary)
-            }
-            .navigationTitle("Appearance")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
 
-struct CurrencySettingsView: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Currency Settings")
-                    .font(.title)
-                Text("Currency selection coming soon")
-                    .foregroundStyle(.secondary)
-            }
-            .navigationTitle("Currency")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-struct BudgetSettingsView: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Budget Settings")
-                    .font(.title)
-                Text("Budget configuration coming soon")
-                    .foregroundStyle(.secondary)
-            }
-            .navigationTitle("Budget Settings")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
 
 struct BackupSettingsView: View {
     var body: some View {

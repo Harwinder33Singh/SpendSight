@@ -42,11 +42,8 @@ class CategorySeeder {
     static func seedIfNeeded(modelContext: NSManagedObjectContext) {
         // Check if categories have already been seeded
         guard !hasSeeded else {
-            print("✅ Categories already seeded, skipping...")
             return
         }
-        
-        print("🌱 Starting category seeding...")
         
         // Create and insert each default category
         for categoryData in defaultCategories {
@@ -57,19 +54,15 @@ class CategorySeeder {
                 icon: categoryData.icon,
                 monthlyBudget: categoryData.budget
             )
-            print("  ✓ Created: \(categoryData.name)")
         }
         
         // Save the context
         do {
             try modelContext.save()
-            print("💾 Categories saved successfully")
-            
             // Mark as seeded
             markAsSeeded()
-            print("✅ Category seeding complete!")
         } catch {
-            print("❌ Error saving categories: \(error.localizedDescription)")
+            // Handle seeding errors silently
         }
     }
     
@@ -88,7 +81,7 @@ class CategorySeeder {
     /// Reset seeding flag (useful for testing)
     static func resetSeedingFlag() {
         UserDefaults.standard.removeObject(forKey: hasSeededKey)
-        print("🔄 Seeding flag reset - categories will be re-seeded on next launch")
+        // Seeding flag reset - categories will be re-seeded on next launch
     }
     
     /// Check if seeding is needed (useful for testing/debugging)

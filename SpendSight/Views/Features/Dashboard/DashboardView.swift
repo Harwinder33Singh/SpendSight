@@ -28,19 +28,12 @@ struct DashboardView: View {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Budget overrun alerts
-                        if !overBudgetCategories.isEmpty {
-                            budgetAlertBanner
-                        }
                         
                         // Spending summary cards
                         spendingSummarySection
                         
                         // Charts section
                         chartsSection
-                        
-                        // Budget progress
-                        budgetProgressSection
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 100) // Space for floating button
@@ -60,61 +53,6 @@ struct DashboardView: View {
         }
     }
     
-    // MARK: - Budget Alert Banner
-    
-    private var budgetAlertBanner: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.red)
-                
-                Text("Budget Alert")
-                    .font(.headline)
-                    .foregroundStyle(.red)
-                
-                Spacer()
-                
-                Button {
-                    // Dismiss all alerts
-                    overBudgetCategories.forEach { category in
-                        if let id = category.id?.uuidString {
-                            viewModel.dismissAlert(for: id)
-                        }
-                    }
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            
-            Text("You're over budget in \(overBudgetCategories.count) \(overBudgetCategories.count == 1 ? "category" : "categories")")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            
-            ForEach(overBudgetCategories.prefix(3), id: \.objectID) { category in
-                HStack {
-                    Image(systemName: category.icon ?? "questionmark")
-                        .foregroundStyle(category.color)
-                    Text(category.name ?? "Unknown")
-                        .font(.subheadline)
-                    Spacer()
-                    Text("\(Int(budgetProgressPercentage(for: category)))%")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.red)
-                }
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.red.opacity(0.1))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(.red.opacity(0.3), lineWidth: 1)
-        )
-    }
     
     // MARK: - Spending Summary
     
@@ -191,34 +129,6 @@ struct DashboardView: View {
         }
     }
     
-    // MARK: - Budget Progress Section
-    
-    private var budgetProgressSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Budget Progress")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Spacer()
-            }
-            
-            let categoriesWithBudgets = viewModel.categoriesWithBudgets(from: Array(categories))
-            
-            if categoriesWithBudgets.isEmpty {
-                EmptyBudgetView()
-            } else {
-                VStack(spacing: 16) {
-                    ForEach(categoriesWithBudgets, id: \.objectID) { category in
-                        BudgetProgressRow(
-                            category: category,
-                            progress: budgetProgress(for: category),
-                            viewModel: viewModel
-                        )
-                    }
-                }
-            }
-        }
-    }
     
     // MARK: - Floating Add Button
     
@@ -281,17 +191,6 @@ struct DashboardView: View {
         viewModel.calculateMovingAverage(data: dailySpendingData, window: 7)
     }
     
-    private var overBudgetCategories: [Category] {
-        viewModel.overBudgetCategories(from: Array(categories), transactions: transactions)
-    }
-    
-    private func budgetProgress(for category: Category) -> (spent: Double, budget: Double, percentage: Double) {
-        viewModel.budgetProgress(for: category, transactions: transactions)
-    }
-    
-    private func budgetProgressPercentage(for category: Category) -> Double {
-        budgetProgress(for: category).percentage
-    }
 }
 
 // MARK: - Preview

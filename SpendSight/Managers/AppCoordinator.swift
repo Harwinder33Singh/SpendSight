@@ -82,10 +82,8 @@ class AppCoordinator: ObservableObject {
             try context.execute(deleteCategories)
             try context.execute(deleteAccounts)
             try context.save()
-            
-            print("✅ All user data deleted")
         } catch {
-            print("❌ Error deleting data: \(error)")
+            // Handle deletion error silently
         }
     }
 }

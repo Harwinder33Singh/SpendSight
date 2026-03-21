@@ -83,37 +83,3 @@ private func formattedCurrency(_ value: Double) -> String {
     return formatter.string(from: NSNumber(value: value)) ?? "$\(String(format: "%.2f", value))"
 }
 
-//// MARK: - Preview
-//
-//#Preview {
-//    struct PreviewWrapper: View {
-//        @State private var amount: String = ""
-//        @FocusState private var focusedField: ManualEntryView.Field?
-//        
-//        var body: some View {
-//            Form {
-//                Section("Amount Entry") {
-//                    CurrencyTextField(
-//                        title: "Enter amount",
-//                        text: $amount,
-//                        focusedField: $focusedField
-//                    )
-//                }
-//                
-//                Section("Debug") {
-//                    Text("Raw Input: '\(amount)'")
-//                    if let parsed = parseAmount(amount) {
-//                        Text("Parsed: $\(String(format: "%.2f", parsed))")
-//                    } else {
-//                        Text("Parsed: Invalid")
-//                    }
-//                }
-//            }
-//            .onAppear {
-//                focusedField = .amount
-//            }
-//        }
-//    }
-//    
-//    return PreviewWrapper()
-//}

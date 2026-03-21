@@ -208,9 +208,8 @@ class TransactionsViewModel: ObservableObject {
         
         do {
             try context.save()
-            print("✅ Transaction deleted")
         } catch {
-            print("❌ Delete failed: \(error)")
+            // Handle deletion error silently
         }
     }
 }

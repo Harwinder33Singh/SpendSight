@@ -165,11 +165,14 @@ class OnboardingViewModel: ObservableObject {
     }
     
     // MARK: - Onboarding Completion
-    
+
     func completeOnboarding() {
         isLoading = true
-        
-        // Create user profile
+
+        // Sync data with Account Info settings (AppStorage)
+        syncWithAccountInfo()
+
+        // Create user profile in Core Data (for potential future features)
         let userProfile = UserProfile(
             context: context,
             fullName: fullName,
@@ -177,7 +180,7 @@ class OnboardingViewModel: ObservableObject {
             phone: phone.isEmpty ? nil : phone,
             currency: selectedCurrency
         )
-        
+
         // Create selected categories
         for categoryName in selectedCategories {
             if let categoryData = defaultCategories.first(where: { $0.name == categoryName }) {
@@ -190,7 +193,7 @@ class OnboardingViewModel: ObservableObject {
                 )
             }
         }
-        
+
         // Create accounts
         for accountData in accounts {
             let account = Account(
@@ -200,30 +203,55 @@ class OnboardingViewModel: ObservableObject {
                 institution: accountData.institution,
                 last4: accountData.last4
             )
+
+            // Add initial balance as income if provided
+            if accountData.initialBalance > 0 {
+                let _ = Income(
+                    context: context,
+                    amount: accountData.initialBalance,
+                    source: "Initial Balance",
+                    date: Date(),
+                    account: account
+                )
+            }
         }
-        
+
         // Mark onboarding as complete
         userProfile.completeOnboarding()
-        
+
         // Mark categories as seeded
         CategorySeeder.markAsSeeded()
-        
+
         // Save everything
         do {
             try context.save()
-            
+
             // Store onboarding completion in UserDefaults
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-            
+
             isLoading = false
             didCompleteOnboarding = true
-            print("✅ Onboarding completed successfully!")
-            
+
         } catch {
             isLoading = false
             showError(message: "Failed to complete onboarding: \(error.localizedDescription)")
-            print("❌ Onboarding error: \(error)")
         }
+    }
+
+    // MARK: - Account Info Sync
+
+    private func syncWithAccountInfo() {
+        // Sync personal information with Account Info settings
+        UserDefaults.standard.set(fullName, forKey: "userName")
+        UserDefaults.standard.set(email, forKey: "userEmail")
+        UserDefaults.standard.set(phone, forKey: "userPhone")
+        UserDefaults.standard.set(selectedCurrency, forKey: "defaultCurrency")
+
+        // Set default preferences
+        UserDefaults.standard.set(true, forKey: "enableNotifications")
+        UserDefaults.standard.set(false, forKey: "enableBiometric")
+        UserDefaults.standard.set("", forKey: "monthlyBudgetGoal")
+
     }
     
     // MARK: - Error Handling
