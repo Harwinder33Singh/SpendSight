@@ -65,24 +65,34 @@ class AppCoordinator: ObservableObject {
         // Delete user profile
         let userRequest: NSFetchRequest<NSFetchRequestResult> = UserProfile.fetchRequest()
         let deleteUsers = NSBatchDeleteRequest(fetchRequest: userRequest)
-        
+
         // Delete transactions
         let transactionRequest: NSFetchRequest<NSFetchRequestResult> = Transaction.fetchRequest()
         let deleteTransactions = NSBatchDeleteRequest(fetchRequest: transactionRequest)
-        
+
         // Delete categories
         let categoryRequest: NSFetchRequest<NSFetchRequestResult> = Category.fetchRequest()
         let deleteCategories = NSBatchDeleteRequest(fetchRequest: categoryRequest)
-        
+
         // Delete accounts
         let accountRequest: NSFetchRequest<NSFetchRequestResult> = Account.fetchRequest()
         let deleteAccounts = NSBatchDeleteRequest(fetchRequest: accountRequest)
-        
+
+        // Delete income records
+        let incomeRequest: NSFetchRequest<NSFetchRequestResult> = Income.fetchRequest()
+        let deleteIncome = NSBatchDeleteRequest(fetchRequest: incomeRequest)
+
+        // Delete savings plans
+        let savingsRequest: NSFetchRequest<NSFetchRequestResult> = SavingsPlan.fetchRequest()
+        let deleteSavings = NSBatchDeleteRequest(fetchRequest: savingsRequest)
+
         do {
             try context.execute(deleteUsers)
             try context.execute(deleteTransactions)
             try context.execute(deleteCategories)
             try context.execute(deleteAccounts)
+            try context.execute(deleteIncome)
+            try context.execute(deleteSavings)
             try context.save()
         } catch {
             logger.error("Failed to delete all user data during logout: \(error.localizedDescription)")

@@ -32,31 +32,31 @@ class DashboardViewModel: ObservableObject {
     var todayRange: (start: Date, end: Date) {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: Date())
-        let end = calendar.date(byAdding: .day, value: 1, to: start)!
+        let end = calendar.date(byAdding: .day, value: 1, to: start) ?? Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         return (start, end)
     }
     
     var thisWeekRange: (start: Date, end: Date) {
         let calendar = Calendar.current
         let now = Date()
-        let start = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
-        let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start)!
+        let start = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? calendar.startOfDay(for: now)
+        let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start) ?? calendar.date(byAdding: .day, value: 7, to: start)!
         return (start, end)
     }
     
     var thisMonthRange: (start: Date, end: Date) {
         let calendar = Calendar.current
         let now = Date()
-        let start = calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
-        let end = calendar.date(byAdding: .month, value: 1, to: start)!
+        let start = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? calendar.startOfDay(for: now)
+        let end = calendar.date(byAdding: .month, value: 1, to: start) ?? calendar.date(byAdding: .day, value: 30, to: start)!
         return (start, end)
     }
     
     var last30DaysRange: (start: Date, end: Date) {
         let calendar = Calendar.current
         let todayStart = calendar.startOfDay(for: Date())
-        let start = calendar.date(byAdding: .day, value: -29, to: todayStart)!
-        let end = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+        let start = calendar.date(byAdding: .day, value: -29, to: todayStart) ?? calendar.date(byAdding: .day, value: -29, to: Date())!
+        let end = calendar.date(byAdding: .day, value: 1, to: todayStart) ?? calendar.date(byAdding: .day, value: 1, to: Date())!
         return (start, end)
     }
     
@@ -84,9 +84,16 @@ class DashboardViewModel: ObservableObject {
             return date >= range.start && date < range.end && transaction.isExpense
         }
 
-        // Group by Category objectID (Hashable, non-optional) to avoid inference issues with optional keys
-        let groupedByCategoryID: [NSManagedObjectID: [Transaction]] = Dictionary(grouping: expensesInRange) { txn in
-            txn.category?.objectID ?? NSManagedObjectID()
+        // Group by Category objectID, filtering out nil categories
+        let expensesWithCategories = expensesInRange.compactMap { txn -> (NSManagedObjectID, Transaction)? in
+            guard let categoryID = txn.category?.objectID else { return nil }
+            return (categoryID, txn)
+        }
+
+        let groupedByCategoryID: [NSManagedObjectID: [Transaction]] = Dictionary(grouping: expensesWithCategories) { tuple in
+            tuple.0
+        }.mapValues { tuples in
+            tuples.map { $0.1 }
         }
 
         // Compute totals per category and map back to actual Category objects
@@ -131,7 +138,8 @@ class DashboardViewModel: ObservableObject {
         while currentDate < endDate {
             let amount = dailyTotals[currentDate] ?? 0
             result.append((date: currentDate, amount: amount))
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+            currentDate = nextDate
         }
         
         return result.sorted { $0.date < $1.date }
