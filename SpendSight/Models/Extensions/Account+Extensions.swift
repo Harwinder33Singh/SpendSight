@@ -141,29 +141,42 @@ extension Account {
     
     // MARK: - Validation Methods
     
-    /// Validates the account before saving
-    /// - Throws: AccountValidationError if validation fails
+    /// Validates the account before saving using DataValidationService
+    /// - Throws: ValidationError if validation fails
     /// - Returns: True if valid
     @discardableResult
     func validate() throws -> Bool {
-        // Check if name is empty
-        guard let name = name?.trimmingCharacters(in: .whitespaces), !name.isEmpty else {
-            throw AccountValidationError.invalidName
+        guard let context = managedObjectContext else {
+            throw ValidationError.referentialIntegrityViolation("Account must be associated with a context")
         }
-        
-        // Check if type is empty
-        guard let type = type?.trimmingCharacters(in: .whitespaces), !type.isEmpty else {
-            throw AccountValidationError.invalidType
-        }
-        
-        // Validate last4 if provided (must be exactly 4 digits)
-        if let last4 = last4, !last4.isEmpty {
-            guard last4.count == 4, last4.allSatisfy({ $0.isNumber }) else {
-                throw AccountValidationError.invalidLast4
-            }
-        }
-        
+        try DataValidationService.validateAccount(self, in: context)
         return true
+    }
+
+    /// Validates if this account can be safely deleted
+    /// - Throws: ValidationError if deletion is not allowed
+    func validateForDeletion() throws {
+        guard let context = managedObjectContext else {
+            throw ValidationError.referentialIntegrityViolation("Account must be associated with a context")
+        }
+        try DataValidationService.canDeleteAccount(self, in: context)
+    }
+
+    /// Creates a new account with validation
+    static func createWithValidation(
+        context: NSManagedObjectContext,
+        name: String,
+        type: String,
+        institution: String? = nil,
+        last4: String? = nil
+    ) throws -> Account {
+        return try DataValidationService.createAccount(
+            name: name,
+            type: type,
+            institution: institution,
+            last4: last4,
+            in: context
+        )
     }
     
     // MARK: - Helper Methods

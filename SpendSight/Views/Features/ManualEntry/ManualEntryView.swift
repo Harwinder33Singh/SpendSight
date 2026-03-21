@@ -322,7 +322,7 @@ struct ManualEntryView: View {
 
         isSaving = true
 
-        let isIncome = (category.name?.lowercased() ?? "") == "income"
+        let isIncome = category.categoryType == .income
         let signedAmount = isIncome ? rawAmount : -abs(rawAmount)
 
         let finalTitle: String
@@ -336,21 +336,20 @@ struct ManualEntryView: View {
 
         let finalPaymentMethod = isIncome ? "N/A" : paymentMethod
 
-        let _ = Transaction(
-            context: context,
-            amount: signedAmount,
-            title: finalTitle,
-            merchant: merchant.isEmpty ? finalTitle : merchant.trimmingCharacters(in: .whitespaces),
-            date: selectedDate,
-            notes: notes.isEmpty ? nil : notes,
-            paymentMethod: finalPaymentMethod,
-            isRecurring: false,
-            category: category,
-            account: account
-        )
-
         do {
-            try context.save()
+            // Use the new validation service to create the transaction
+            let _ = try context.createValidatedTransaction(
+                title: finalTitle,
+                amount: signedAmount,
+                date: selectedDate,
+                merchant: merchant.isEmpty ? finalTitle : merchant.trimmingCharacters(in: .whitespaces),
+                paymentMethod: finalPaymentMethod,
+                category: category,
+                account: account
+            )
+
+            // Save with validation
+            try context.saveWithValidation()
 
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 

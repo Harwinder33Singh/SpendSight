@@ -184,39 +184,40 @@ extension Transaction {
     
     // MARK: - Validation Methods
     
-    // Validates the transaction before saving
+    /// Validates the transaction before saving using DataValidationService
     /// - Throws: ValidationError if validation fails
     /// - Returns: True if valid
     ///
     @discardableResult
     func validate() throws -> Bool {
-        // check if amount is zero
-        guard amount != 0 else {
-            throw ValidationError.invalidAmount("Amount cannot be zero")
+        guard let context = managedObjectContext else {
+            throw ValidationError.referentialIntegrityViolation("Transaction must be associated with a context")
         }
-        
-        guard let title = title?.trimmingCharacters(in: .whitespaces), !title.isEmpty else {
-            throw ValidationError.invalidTitle
-        }
-        
-        guard let merchant = merchant?.trimmingCharacters(in: .whitespaces), !merchant.isEmpty else {
-            throw ValidationError.invalidMerchant
-        }
-        
-        guard let paymentMethod = paymentMethod?.trimmingCharacters(in: .whitespaces), !paymentMethod.isEmpty else {
-            throw ValidationError.invalidPaymentMethod
-        }
-        guard date != nil else {
-            throw ValidationError.missingDate
-        }
-        guard category != nil else {
-            throw ValidationError.missingCategory
-        }
-        guard account != nil else {
-            throw ValidationError.missingAccount
-        }
-        
+        try DataValidationService.validateTransaction(self, in: context)
         return true
+    }
+
+    /// Creates a new transaction with validation
+    static func createWithValidation(
+        context: NSManagedObjectContext,
+        title: String,
+        amount: Double,
+        date: Date,
+        merchant: String?,
+        paymentMethod: String?,
+        category: Category,
+        account: Account
+    ) throws -> Transaction {
+        return try DataValidationService.createTransaction(
+            title: title,
+            amount: amount,
+            date: date,
+            merchant: merchant,
+            paymentMethod: paymentMethod,
+            category: category,
+            account: account,
+            in: context
+        )
     }
     
     /// Updates the updatedAt timestamp
@@ -225,33 +226,39 @@ extension Transaction {
     }
 }
 
-// MARK: - Validation Errors
+// MARK: - Transaction Type Helpers
 
-enum ValidationError: LocalizedError {
-    case invalidAmount(String)
-    case invalidTitle
-    case invalidMerchant
-    case invalidPaymentMethod
-    case missingDate
-    case missingCategory
-    case missingAccount
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidAmount(let message):
-            return message
-        case .invalidTitle:
-            return "Transaction must have a title"
-        case .invalidMerchant:
-            return "Transaction must have a merchant name"
-        case .invalidPaymentMethod:
-            return "Transaction must have a payment method"
-        case .missingDate:
-            return "Transaction must have a date"
-        case .missingCategory:
-            return "Transaction must have a category"
-        case .missingAccount:
-            return "Transaction must have an account"
+extension Transaction {
+    enum TransactionType: String, CaseIterable {
+        case expense = "expense"
+        case income = "income"
+        case transfer = "transfer"
+
+        var displayName: String {
+            switch self {
+            case .expense: return "Expense"
+            case .income: return "Income"
+            case .transfer: return "Transfer"
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .expense: return "minus.circle.fill"
+            case .income: return "plus.circle.fill"
+            case .transfer: return "arrow.left.arrow.right.circle.fill"
+            }
+        }
+    }
+
+    /// Returns the transaction type based on amount and category
+    var transactionType: TransactionType {
+        if amount > 0 {
+            return .income
+        } else if category?.categoryType == .transfer {
+            return .transfer
+        } else {
+            return .expense
         }
     }
 }

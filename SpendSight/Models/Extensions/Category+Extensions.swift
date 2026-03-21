@@ -11,6 +11,30 @@ import SwiftUI
 
 extension Category {
     
+    /// Backing bridge to Core Data string attribute for category type
+    @objc private var type: String? {
+        get { self.value(forKey: "type") as? String }
+        set { self.setValue(newValue, forKey: "type") }
+    }
+
+    /// Backing bridge to Core Data boolean attribute for system category flag
+    @objc private var isSystemCategory: Bool {
+        get { (self.value(forKey: "isSystemCategory") as? Bool) ?? false }
+        set { self.setValue(newValue, forKey: "isSystemCategory") }
+    }
+
+    /// Public shim used throughout the extension; maps to `type` attribute
+    var typeRaw: String? {
+        get { type }
+        set { type = newValue }
+    }
+
+    /// Public shim used throughout the extension; maps to `isSystemCategory` attribute
+    var isSystemCategoryFlag: Bool {
+        get { isSystemCategory }
+        set { isSystemCategory = newValue }
+    }
+
     // MARK: - Convenience Initializer
     /// Convenience initializer for creating a new Category with all required parameters
     /// - Parameters:
@@ -25,17 +49,21 @@ extension Category {
         name: String,
         colorHex: String,
         icon: String,
-        monthlyBudget: Double? = nil
+        monthlyBudget: Double? = nil,
+        categoryType: CategoryType = .expense,
+        isSystemCategory: Bool = false
     ) {
         // Call the designated initializer
         self.init(context: context)
-        
+
         // set other properties
         self.id = UUID()
         self.name = name
         self.colorHex = colorHex
         self.icon = icon
         self.monthlyBudget = monthlyBudget ?? 0.0
+        self.typeRaw = categoryType.rawValue
+        self.isSystemCategoryFlag = isSystemCategory
     }
     
     // MARK: - Computed Properties
@@ -67,6 +95,21 @@ extension Category {
     /// Returns the number of transactions in this category
     var transactionCount: Int {
         transaction?.count ?? 0
+    }
+
+    /// Returns true if this is a system category that cannot be deleted
+    var isProtected: Bool {
+        return isSystemCategoryFlag || DataValidationService.systemCategoryNames.contains(name ?? "")
+    }
+
+    /// Returns the category type enum
+    var categoryType: CategoryType {
+        get {
+            return CategoryType(rawValue: typeRaw ?? CategoryType.expense.rawValue) ?? .expense
+        }
+        set {
+            typeRaw = newValue.rawValue
+        }
     }
     
     /// Returns all transactions as an array (sorted by date descending)
@@ -129,29 +172,47 @@ extension Category {
     
     // MARK: - Validation Methods
     
-    /// Validates the category before saving
-    /// - Throws: CategoryValidationError if validation fails
+    /// Validates the category before saving using DataValidationService
+    /// - Throws: ValidationError if validation fails
     /// - Returns: True if valid
     ///
     @discardableResult
     func validate() throws -> Bool {
-        guard let name = name?.trimmingCharacters(in: .whitespaces), !name.isEmpty else {
-            throw CategoryValidationError.invalidName
+        guard let context = managedObjectContext else {
+            throw ValidationError.referentialIntegrityViolation("Category must be associated with a context")
         }
-        
-        guard let hex = colorHex, hex.hasPrefix("#"), (hex.count == 7 || hex.count == 9) else {
-            throw CategoryValidationError.invalidColorHex
-        }
-        
-        guard let icon = icon?.trimmingCharacters(in: .whitespaces), !icon.isEmpty else {
-            throw CategoryValidationError.invalidIcon
-        }
-        
-        if (monthlyBudget ?? 0) < 0 {
-            throw CategoryValidationError.negativeBudget
-        }
-        
+        try DataValidationService.validateCategory(self, in: context)
         return true
+    }
+
+    /// Validates if this category can be safely deleted
+    /// - Throws: ValidationError if deletion is not allowed
+    func validateForDeletion() throws {
+        guard let context = managedObjectContext else {
+            throw ValidationError.referentialIntegrityViolation("Category must be associated with a context")
+        }
+        try DataValidationService.canDeleteCategory(self, in: context)
+    }
+
+    /// Creates a new category with validation
+    static func createWithValidation(
+        context: NSManagedObjectContext,
+        name: String,
+        colorHex: String,
+        icon: String,
+        monthlyBudget: Double? = nil,
+        categoryType: CategoryType = .expense,
+        isSystemCategory: Bool = false
+    ) throws -> Category {
+        return try DataValidationService.createCategory(
+            name: name,
+            colorHex: colorHex,
+            icon: icon,
+            monthlyBudget: monthlyBudget,
+            categoryType: categoryType,
+            isSystemCategory: isSystemCategory,
+            in: context
+        )
     }
     
     // MARK: - Helper Methods
@@ -282,6 +343,32 @@ extension Color {
     }
 }
 
+// MARK: - Category Type Enum
+
+extension Category {
+    enum CategoryType: String, CaseIterable {
+        case income = "income"
+        case expense = "expense"
+        case transfer = "transfer"
+
+        var displayName: String {
+            switch self {
+            case .income: return "Income"
+            case .expense: return "Expense"
+            case .transfer: return "Transfer"
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .income: return "plus.circle.fill"
+            case .expense: return "minus.circle.fill"
+            case .transfer: return "arrow.left.arrow.right.circle.fill"
+            }
+        }
+    }
+}
+
 // MARK: - Default Categories Helper
 
 extension Category {
@@ -314,8 +401,33 @@ extension Category {
                 name: item.name,
                 colorHex: item.color,
                 icon: item.icon,
-                monthlyBudget: item.budget
+                monthlyBudget: item.budget,
+                categoryType: item.name == "Income" ? .income : .expense,
+                isSystemCategory: ["Income", "Other", "Uncategorized", "Transfer"].contains(item.name)
+            )
+        }
+    }
+
+    /// Create system categories that are required for the app to function
+    static func createSystemCategories(in context: NSManagedObjectContext) -> [Category] {
+        let systemCategories: [(name: String, color: String, icon: String, type: CategoryType)] = [
+            ("Income", "#8BC34A", "dollarsign.circle.fill", .income),
+            ("Other", "#9E9E9E", "questionmark.circle.fill", .expense),
+            ("Uncategorized", "#9E9E9E", "questionmark.diamond.fill", .expense),
+            ("Transfer", "#607D8B", "arrow.left.arrow.right.circle.fill", .transfer)
+        ]
+
+        return systemCategories.map { item in
+            Category(
+                context: context,
+                name: item.name,
+                colorHex: item.color,
+                icon: item.icon,
+                monthlyBudget: nil,
+                categoryType: item.type,
+                isSystemCategory: true
             )
         }
     }
 }
+
