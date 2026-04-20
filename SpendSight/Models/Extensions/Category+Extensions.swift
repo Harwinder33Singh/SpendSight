@@ -11,28 +11,28 @@ import SwiftUI
 
 extension Category {
     
-    /// Backing bridge to Core Data string attribute for category type
-    @objc private var type: String? {
+    /// Backing bridge to Core Data string attribute for category type (renamed to avoid collision with generated accessors)
+    @objc private var _typeRawBridge: String? {
         get { self.value(forKey: "type") as? String }
         set { self.setValue(newValue, forKey: "type") }
     }
 
-    /// Backing bridge to Core Data boolean attribute for system category flag
-    @objc private var isSystemCategory: Bool {
+    /// Backing bridge to Core Data boolean attribute for system category flag (renamed to avoid collision with generated accessors)
+    @objc private var _isSystemCategoryBridge: Bool {
         get { (self.value(forKey: "isSystemCategory") as? Bool) ?? false }
         set { self.setValue(newValue, forKey: "isSystemCategory") }
     }
 
     /// Public shim used throughout the extension; maps to `type` attribute
     var typeRaw: String? {
-        get { type }
-        set { type = newValue }
+        get { _typeRawBridge }
+        set { _typeRawBridge = newValue }
     }
 
     /// Public shim used throughout the extension; maps to `isSystemCategory` attribute
     var isSystemCategoryFlag: Bool {
-        get { isSystemCategory }
-        set { isSystemCategory = newValue }
+        get { _isSystemCategoryBridge }
+        set { _isSystemCategoryBridge = newValue }
     }
 
     // MARK: - Convenience Initializer

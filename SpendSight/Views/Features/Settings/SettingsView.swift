@@ -24,6 +24,7 @@ struct SettingsView: View {
     @State private var showHelpCenter = false
     @State private var showPrivacyPolicy = false
     @State private var showDatabaseInfo = false
+    @State private var showConnectedAccounts = false
 
     var body: some View {
         NavigationStack {
@@ -78,6 +79,10 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showDatabaseInfo) {
                 DatabaseInfoView()
+                    .environment(\.managedObjectContext, context)
+            }
+            .sheet(isPresented: $showConnectedAccounts) {
+                ConnectedAccountsView()
                     .environment(\.managedObjectContext, context)
             }
             .alert("Delete All Data", isPresented: $showDeleteConfirmation) {
@@ -157,6 +162,18 @@ struct SettingsView: View {
                     iconColor: .green
                 ) {
                     showAccountManagement = true
+                }
+                
+                Divider()
+                    .padding(.leading, 44)
+
+                SettingsRow(
+                    icon: "link.circle.fill",
+                    title: "Connected Banks",
+                    subtitle: "Link bank accounts via Plaid",
+                    iconColor: .indigo
+                ) {
+                    showConnectedAccounts = true
                 }
             }
             .background(

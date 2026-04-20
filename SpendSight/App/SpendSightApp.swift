@@ -66,7 +66,23 @@ struct SpendSightApp: App {
             .onAppear {
                 coordinator.checkAppState(coreDataError: persistenceController.loadError)
             }
-        }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                let context = persistenceController.container.viewContext
+                let userId = UserDefaults.standard.string(forKey: "userName") ?? "default-user"
+                let connected = UserDefaults.standard.bool(forKey: "hasConnectedBank")
+                guard connected else { return }
+
+                Task {
+                    do {
+                        let transactions = try await PlaidService.shared.syncTransactions(userId: userId)
+                        guard !transactions.isEmpty else { return }
+                        // Import silently in background
+                        await PlaidImporter.shared.importTransactions(transactions, into: context)
+                    } catch {
+                        print("Background sync failed: \(error)")
+                    }
+                }
+            }        }
     }
 }
 

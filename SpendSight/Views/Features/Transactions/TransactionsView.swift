@@ -68,8 +68,86 @@ struct TransactionsView: View {
             }
             .refreshable {
                 // Refresh data (mainly useful if you add sync later)
+                await syncPlaidTransactions()
                 context.refreshAllObjects()
+                
             }
+        }
+    }
+    
+    private func syncPlaidTransactions() async {
+        let userId = UserDefaults.standard.string(forKey: "userName") ?? "default-user"
+        
+        do {
+            let plaidTransactions = try await PlaidService.shared.syncTransactions(userId: userId)
+            
+            guard !plaidTransactions.isEmpty else { return }
+            
+            await context.perform {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                
+                for plaidTx in plaidTransactions {
+                    // Skip pending
+                    if plaidTx.pending == true { continue }
+                    
+                    // Skip duplicates
+                    let request = Transaction.fetchRequest()
+                    request.predicate = NSPredicate(
+                        format: "plaidTransactionId == %@",
+                        plaidTx.plaidTransactionId
+                    )
+                    request.fetchLimit = 1
+                    if let existing = try? context.fetch(request), !existing.isEmpty { continue }
+                    
+                    // Find account
+                    let accountRequest = Account.fetchRequest()
+                    accountRequest.predicate = NSPredicate(
+                        format: "plaidItemId == %@",
+                        plaidTx.itemId ?? ""
+                    )
+                    accountRequest.fetchLimit = 1
+                    guard let account = try? context.fetch(accountRequest).first else { continue }
+                    
+                    // Find category
+                    let categoryName = PlaidCategoryMapper.mapToSpendSight(plaidTx.plaidCategory)
+                    let categoryRequest = Category.fetchRequest()
+                    categoryRequest.predicate = NSPredicate(format: "name ==[cd] %@", categoryName)
+                    categoryRequest.fetchLimit = 1
+                    
+                    var category = try? context.fetch(categoryRequest).first
+                    if category == nil {
+                        let fallback = Category.fetchRequest()
+                        fallback.predicate = NSPredicate(format: "name ==[cd] %@", "Other")
+                        fallback.fetchLimit = 1
+                        category = try? context.fetch(fallback).first
+                    }
+                    
+                    guard let category = category else { continue }
+                    
+                    let date = dateFormatter.date(from: plaidTx.date) ?? Date()
+                    let amount = -plaidTx.amount
+                    
+                    let transaction = Transaction(context: context)
+                    transaction.id = UUID()
+                    transaction.amount = amount
+                    transaction.title = plaidTx.merchantName ?? "Transaction"
+                    transaction.merchant = plaidTx.merchantName ?? ""
+                    transaction.date = date
+                    transaction.paymentMethod = "Bank"
+                    transaction.isRecurring = false
+                    transaction.category = category
+                    transaction.account = account
+                    transaction.plaidTransactionId = plaidTx.plaidTransactionId
+                    transaction.createdAt = Date()
+                    transaction.updatedAt = Date()
+                }
+                
+                try? context.save()
+            }
+        } catch {
+            // Sync failed silently — user can try again
+            print("Plaid sync failed: \(error.localizedDescription)")
         }
     }
     

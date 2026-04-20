@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A955B4952F9698940008A8D2 /* LinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = A955B4942F9698940008A8D2 /* LinkKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		A9B031082F08492700462447 /* SpendSight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpendSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,16 +40,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A955B4952F9698940008A8D2 /* LinkKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A955B4932F9698940008A8D2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A9B030FF2F08492700462447 = {
 			isa = PBXGroup;
 			children = (
 				A9B0310A2F08492700462447 /* SpendSight */,
+				A955B4932F9698940008A8D2 /* Frameworks */,
 				A9B031092F08492700462447 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -78,6 +91,7 @@
 			);
 			name = SpendSight;
 			packageProductDependencies = (
+				A955B4942F9698940008A8D2 /* LinkKit */,
 			);
 			productName = SpendSight;
 			productReference = A9B031082F08492700462447 /* SpendSight.app */;
@@ -107,6 +121,9 @@
 			);
 			mainGroup = A9B030FF2F08492700462447;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A9189A762F901E530004E354 /* XCRemoteSwiftPackageReference "plaid-link-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A9B031092F08492700462447 /* Products */;
 			projectDirPath = "";
@@ -347,6 +364,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A9189A762F901E530004E354 /* XCRemoteSwiftPackageReference "plaid-link-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/plaid/plaid-link-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.4.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A955B4942F9698940008A8D2 /* LinkKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9189A762F901E530004E354 /* XCRemoteSwiftPackageReference "plaid-link-ios" */;
+			productName = LinkKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A9B031002F08492700462447 /* Project object */;
 }

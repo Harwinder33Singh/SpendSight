@@ -228,7 +228,7 @@ class DataValidationService {
     /// Validates transaction data before creation
     static func validateTransaction(_ transaction: Transaction, in context: NSManagedObjectContext) throws {
         // Validate amount
-        if transaction.amount <= 0 {
+        if transaction.amount == 0 {
             throw ValidationError.invalidAmount
         }
 

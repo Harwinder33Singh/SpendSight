@@ -22,12 +22,23 @@ struct DashboardView: View {
     private var categories: FetchedResults<Category>
     
     @State private var showManualEntry = false
+    @AppStorage("lastPlaidSync") private var lastSyncTimestamp: Double = 0
     
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
                     VStack(spacing: 20) {
+                        
+                        HStack {
+                            Image(systemName: "building.columns.fill")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text(lastSyncText)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
                         
                         // Spending summary cards
                         spendingSummarySection
@@ -51,6 +62,14 @@ struct DashboardView: View {
                     .environment(\.managedObjectContext, context)
             }
         }
+    }
+    
+    private var lastSyncText: String {
+        guard lastSyncTimestamp > 0 else { return "Never synced" }
+        let date = Date(timeIntervalSince1970: lastSyncTimestamp)
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return "Synced \(formatter.localizedString(for: date, relativeTo: Date()))"
     }
     
     
