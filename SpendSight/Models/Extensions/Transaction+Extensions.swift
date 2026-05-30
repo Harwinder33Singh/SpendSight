@@ -89,7 +89,12 @@ extension Transaction {
     var isExpense: Bool {
         amount < 0
     }
-    
+
+    /// True for real spending — excludes credit card payments which are debt repayment, not new spending
+    var isRealExpense: Bool {
+        isExpense && category?.name?.lowercased() != "credit card payment"
+    }
+
     /// Returns true if this is an income (positive amount)
     var isIncome: Bool {
         amount > 0

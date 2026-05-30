@@ -23,9 +23,6 @@ struct ConnectedAccountsView: View {
     @State private var successMessage = ""
     @State private var connectionError: PlaidConnectionError?
 
-    private var userId: String {
-        UserDefaults.standard.string(forKey: "userName") ?? "default-user"
-    }
 
     var body: some View {
         NavigationStack {
@@ -68,7 +65,7 @@ struct ConnectedAccountsView: View {
 
                     // Connect new bank section
                     Section {
-                        PlaidLinkButton(userId: userId) { institutionName in
+                        PlaidLinkButton { institutionName in
                             UserDefaults.standard.set(true, forKey: "hasConnectedBank")
                             successMessage = "\(institutionName) connected successfully"
                             showSuccess = true
@@ -132,7 +129,7 @@ struct ConnectedAccountsView: View {
 
         Task {
             do {
-                let plaidTransactions = try await PlaidService.shared.syncTransactions(userId: userId)
+                let plaidTransactions = try await PlaidService.shared.syncTransactions()
                 await PlaidImporter.shared.importTransactions(plaidTransactions, into: context)
 
                 await MainActor.run {

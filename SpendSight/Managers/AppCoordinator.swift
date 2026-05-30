@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 import Combine
 import OSLog
+internal import Auth
 
 private let logger = Logger(subsystem: "com.harwinder.SpendSight", category: "AppCoordinator")
 
@@ -32,12 +33,26 @@ class AppCoordinator: ObservableObject {
             return
         }
 
-        // Initialize services
         _ = CurrencyService.shared
         _ = BudgetMonitorService.shared
+        CategorySeeder.fixIncomeTypeMigration(modelContext: context)
 
-        let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        appState = hasCompletedOnboarding ? .main : .onboarding
+        Task {
+            await AuthService.shared.initialize()
+
+            if !AuthService.shared.isAuthenticated {
+                appState = .unauthenticated
+            } else {
+                await resolvePostAuthState()
+            }
+
+            // React to future auth changes (sign in / sign out)
+            for await _ in NotificationCenter.default.notifications(named: .authStateDidChange) {
+                if !AuthService.shared.isAuthenticated {
+                    appState = .unauthenticated
+                }
+            }
+        }
     }
     
     // MARK: - Onboarding
@@ -50,17 +65,42 @@ class AppCoordinator: ObservableObject {
     // MARK: - Logout
     
     func logout() {
-        // Clear onboarding flag
         UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-        
-        // Clear category seeding flag
         UserDefaults.standard.set(false, forKey: "hasSeededCategories")
-        
-        // Delete all user data
         deleteAllData()
-        
-        // Reset app state
-        appState = .onboarding
+
+        Task {
+            try? await AuthService.shared.signOut()
+            appState = .unauthenticated
+        }
+    }
+
+    func authDidSignIn() {
+        Task { await resolvePostAuthState() }
+    }
+
+    // Checks Supabase user metadata first, then falls back to UserDefaults.
+    // This means a returning user on a new device goes straight to main.
+    private func resolvePostAuthState() async {
+        let localFlag = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+
+        // Check the flag stored in Supabase user metadata
+        let remoteFlag: Bool = {
+            guard let user = AuthService.shared.currentUser,
+                  case .bool(let v) = user.userMetadata["onboarding_completed"] else {
+                return false
+            }
+            return v
+        }()
+
+        let hasOnboarded = localFlag || remoteFlag
+
+        // Sync back to UserDefaults so future launches are instant
+        if remoteFlag && !localFlag {
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        }
+
+        appState = hasOnboarded ? .main : .onboarding
     }
     
     // MARK: - Data Management
@@ -104,10 +144,17 @@ class AppCoordinator: ObservableObject {
     }
 }
 
+// MARK: - Notification
+
+extension Notification.Name {
+    static let authStateDidChange = Notification.Name("authStateDidChange")
+}
+
 // MARK: - App State
 
 enum AppState {
     case loading
+    case unauthenticated
     case onboarding
     case main
     case failed(String)

@@ -19,6 +19,7 @@ class PlaidImporter {
 
             for plaidTx in plaidTransactions {
                 if plaidTx.pending == true { continue }
+                guard let itemId = plaidTx.itemId, !itemId.isEmpty else { continue }
 
                 // Skip duplicates
                 let request = Transaction.fetchRequest()
@@ -29,14 +30,22 @@ class PlaidImporter {
                 request.fetchLimit = 1
                 if let existing = try? context.fetch(request), !existing.isEmpty { continue }
 
-                // Find account
+                // Find or create account
                 let accountRequest = Account.fetchRequest()
-                accountRequest.predicate = NSPredicate(
-                    format: "plaidItemId == %@",
-                    plaidTx.itemId ?? ""
-                )
+                accountRequest.predicate = NSPredicate(format: "plaidItemId == %@", itemId)
                 accountRequest.fetchLimit = 1
-                guard let account = try? context.fetch(accountRequest).first else { continue }
+                let account: Account
+                if let existing = try? context.fetch(accountRequest).first {
+                    account = existing
+                } else {
+                    let newAccount = Account(context: context)
+                    newAccount.id = UUID()
+                    newAccount.name = plaidTx.institutionName ?? "Connected Bank"
+                    newAccount.type = "Checking"
+                    newAccount.plaidItemId = itemId
+                    newAccount.plaidInstitutionName = plaidTx.institutionName ?? "Connected Bank"
+                    account = newAccount
+                }
 
                 // Find category
                 let categoryName = PlaidCategoryMapper.mapToSpendSight(plaidTx.plaidCategory)

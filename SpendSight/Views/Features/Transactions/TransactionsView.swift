@@ -76,10 +76,8 @@ struct TransactionsView: View {
     }
     
     private func syncPlaidTransactions() async {
-        let userId = UserDefaults.standard.string(forKey: "userName") ?? "default-user"
-        
         do {
-            let plaidTransactions = try await PlaidService.shared.syncTransactions(userId: userId)
+            let plaidTransactions = try await PlaidService.shared.syncTransactions()
             
             guard !plaidTransactions.isEmpty else { return }
             

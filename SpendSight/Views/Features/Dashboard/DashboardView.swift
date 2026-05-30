@@ -12,58 +12,51 @@ import Charts
 struct DashboardView: View {
     @Environment(\.managedObjectContext) private var context
     @StateObject private var viewModel = DashboardViewModel()
-    
-    // Fetch all data needed
+
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Transaction.date, ascending: false)]
     ) private var allTransactions: FetchedResults<Transaction>
-    
+
     @FetchRequest(fetchRequest: Category.fetchAll())
     private var categories: FetchedResults<Category>
-    
-    @State private var showManualEntry = false
+
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Income.date, ascending: false)]
+    ) private var allIncomes: FetchedResults<Income>
+
     @AppStorage("lastPlaidSync") private var lastSyncTimestamp: Double = 0
-    
+
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        
-                        HStack {
-                            Image(systemName: "building.columns.fill")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Text(lastSyncText)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                        }
-                        
-                        // Spending summary cards
-                        spendingSummarySection
-                        
-                        // Charts section
-                        chartsSection
+            ScrollView {
+                VStack(spacing: 20) {
+
+                    // Sync status
+                    HStack {
+                        Image(systemName: "building.columns.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(lastSyncText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 100) // Space for floating button
+
+                    spendingSummarySection
+                    chartsSection
                 }
-                .refreshable {
-                    context.refreshAllObjects()
-                }
-                
-                // Floating action button
-                floatingAddButton
+                .padding(.horizontal)
+                .padding(.bottom, 100)
+            }
+            .refreshable {
+                context.refreshAllObjects()
             }
             .navigationTitle("Dashboard")
-            .sheet(isPresented: $showManualEntry) {
-                ManualEntryView()
-                    .environment(\.managedObjectContext, context)
-            }
         }
     }
-    
+
+    // MARK: - Sync Text
+
     private var lastSyncText: String {
         guard lastSyncTimestamp > 0 else { return "Never synced" }
         let date = Date(timeIntervalSince1970: lastSyncTimestamp)
@@ -71,10 +64,9 @@ struct DashboardView: View {
         formatter.unitsStyle = .abbreviated
         return "Synced \(formatter.localizedString(for: date, relativeTo: Date()))"
     }
-    
-    
+
     // MARK: - Spending Summary
-    
+
     private var spendingSummarySection: some View {
         VStack(spacing: 12) {
             HStack {
@@ -83,133 +75,98 @@ struct DashboardView: View {
                     .fontWeight(.bold)
                 Spacer()
             }
-            
+
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                SummaryCard(
-                    title: "Today",
-                    amount: todayTotal,
-                    icon: "calendar",
-                    color: .blue
-                )
-                
-                SummaryCard(
-                    title: "This Week",
-                    amount: thisWeekTotal,
-                    icon: "calendar.badge.clock",
-                    color: .purple
-                )
-                
-                SummaryCard(
-                    title: "This Month",
-                    amount: thisMonthTotal,
-                    icon: "calendar.circle",
-                    color: .orange
-                )
-                
-                SummaryCard(
-                    title: "Daily Avg",
-                    amount: dailyAverage,
-                    icon: "chart.bar",
-                    color: .green
-                )
+                SummaryCard(title: "Today",      amount: todayTotal,     icon: "calendar",             color: .blue)
+                SummaryCard(title: "This Week",  amount: thisWeekTotal,  icon: "calendar.badge.clock", color: .purple)
+                SummaryCard(title: "This Month", amount: thisMonthTotal, icon: "calendar.circle",      color: .orange)
+                SummaryCard(title: "Daily Avg",  amount: dailyAverage,   icon: "chart.bar",            color: .green)
             }
         }
     }
-    
+
     // MARK: - Charts Section
-    
+
     private var chartsSection: some View {
         VStack(spacing: 20) {
-            // Top Categories Chart
+
+            // Top Categories donut
             VStack(alignment: .leading, spacing: 12) {
                 Text("Top Categories")
                     .font(.title2)
                     .fontWeight(.bold)
-                
+
                 CategorySpendingChart(
                     data: topCategoriesData,
                     viewModel: viewModel
                 )
                 .frame(height: 300)
             }
-            
-            // Spending Trend Chart
+
+            // 30-day area trend (replaces SpendingTrendChart)
             VStack(alignment: .leading, spacing: 12) {
                 Text("Spending Trend (30 Days)")
                     .font(.title2)
                     .fontWeight(.bold)
-                
-                SpendingTrendChart(
+
+                AreaTrendChart(
                     dailyData: dailySpendingData,
                     movingAverage: movingAverageData
                 )
-                .frame(height: 250)
+            }
+
+            // 6-month income vs expenses bars
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Monthly Overview")
+                    .font(.title2)
+                    .fontWeight(.bold)
+
+                MonthlyBarsChart(data: monthlyBarDataPoints)
             }
         }
     }
-    
-    
-    // MARK: - Floating Add Button
-    
-    private var floatingAddButton: some View {
-        Button {
-            showManualEntry = true
-        } label: {
-            Image(systemName: "plus")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .frame(width: 60, height: 60)
-                .background(
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.blue, .purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
-                )
-        }
-        .padding(.trailing, 20)
-        .padding(.bottom, 20)
-    }
-    
+
     // MARK: - Computed Properties
-    
+
     private var transactions: [Transaction] {
         Array(allTransactions)
     }
-    
+
     private var todayTotal: Double {
         viewModel.totalSpending(from: transactions, in: viewModel.todayRange)
     }
-    
+
     private var thisWeekTotal: Double {
         viewModel.totalSpending(from: transactions, in: viewModel.thisWeekRange)
     }
-    
+
     private var thisMonthTotal: Double {
         viewModel.totalSpending(from: transactions, in: viewModel.thisMonthRange)
     }
-    
+
     private var dailyAverage: Double {
         viewModel.averageDailySpending(from: transactions, in: viewModel.thisMonthRange)
     }
-    
+
     private var topCategoriesData: [(category: Category, amount: Double)] {
         viewModel.topCategories(from: transactions, in: viewModel.thisMonthRange, limit: 5)
     }
-    
+
     private var dailySpendingData: [(date: Date, amount: Double)] {
         viewModel.dailySpending(from: transactions, in: viewModel.last30DaysRange)
     }
-    
+
     private var movingAverageData: [(date: Date, average: Double)] {
         viewModel.calculateMovingAverage(data: dailySpendingData, window: 7)
     }
-    
+
+    private var monthlyBarDataPoints: [MonthlyBarData] {
+        viewModel.monthlyBarData(
+            from: Array(allTransactions),
+            incomes: Array(allIncomes),
+            months: 6
+        )
+    }
 }
 
 // MARK: - Preview

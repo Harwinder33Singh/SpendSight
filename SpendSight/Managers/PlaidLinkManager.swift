@@ -28,11 +28,8 @@ class PlaidLinkManager: ObservableObject {
     @Published var didConnectBank = false
 
     private var handler: Handler?
-    private let userId: String
 
-    init(userId: String) {
-        self.userId = userId
-    }
+    init() {}
 
     // MARK: - Start Plaid Link
 
@@ -43,7 +40,7 @@ class PlaidLinkManager: ObservableObject {
         Task {
             do {
                 // Get link token from our backend
-                let linkToken = try await PlaidService.shared.createLinkToken(userId: userId)
+                let linkToken = try await PlaidService.shared.createLinkToken()
 
                 // Configure Plaid Link
                 var linkConfiguration = LinkTokenConfiguration(
@@ -93,8 +90,7 @@ class PlaidLinkManager: ObservableObject {
 
         do {
             let response = try await PlaidService.shared.exchangePublicToken(
-                publicToken: publicToken,
-                userId: userId
+                publicToken: publicToken
             )
 
             connectedInstitutionName = response.institutionName
@@ -118,11 +114,10 @@ class PlaidLinkManager: ObservableObject {
 // MARK: - SwiftUI Wrapper
 
 struct PlaidLinkButton: View {
-    @StateObject private var manager: PlaidLinkManager
+    @StateObject private var manager = PlaidLinkManager()
     let onSuccess: (String) -> Void
 
-    init(userId: String, onSuccess: @escaping (String) -> Void) {
-        _manager = StateObject(wrappedValue: PlaidLinkManager(userId: userId))
+    init(onSuccess: @escaping (String) -> Void) {
         self.onSuccess = onSuccess
     }
 

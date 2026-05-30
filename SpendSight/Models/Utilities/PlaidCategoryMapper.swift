@@ -12,6 +12,9 @@ struct PlaidCategoryMapper {
         guard let category = plaidCategory?.lowercased() else { return "Other" }
 
         switch category {
+        // Income must be checked before transfer so TRANSFER_IN isn't wrongly mapped
+        case let c where c.contains("income") || c.contains("payroll") || c.contains("transfer_in") || c.contains("interest"):
+            return "Income"
         case let c where c.contains("food") || c.contains("restaurant") || c.contains("dining"):
             return "Dining Out"
         case let c where c.contains("groceries") || c.contains("supermarket"):
@@ -36,10 +39,8 @@ struct PlaidCategoryMapper {
             return "Fuel"
         case let c where c.contains("hotel") || c.contains("lodging"):
             return "Hotel"
-        case let c where c.contains("transfer") || c.contains("payment") || c.contains("credit card"):
+        case let c where c.contains("transfer") || c.contains("payment") || c.contains("loan") || c.contains("credit card"):
             return "Credit Card Payment"
-        case let c where c.contains("income") || c.contains("payroll") || c.contains("deposit"):
-            return "Income"
         default:
             return "Other"
         }

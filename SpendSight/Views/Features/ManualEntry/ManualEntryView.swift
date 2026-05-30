@@ -322,7 +322,7 @@ struct ManualEntryView: View {
 
         isSaving = true
 
-        let isIncome = category.categoryType == .income
+        let isIncome = isIncomeCategory
         let signedAmount = isIncome ? rawAmount : -abs(rawAmount)
 
         let finalTitle: String

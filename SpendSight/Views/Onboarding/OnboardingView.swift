@@ -85,8 +85,6 @@ struct OnboardingView: View {
                 switch viewModel.currentStep {
                 case .welcome:
                     WelcomeStepView()
-                case .personalInfo:
-                    PersonalInfoStepView(viewModel: viewModel)
                 case .categories:
                     CategoriesStepView(viewModel: viewModel)
                 case .accounts:

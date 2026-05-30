@@ -66,7 +66,7 @@ class DashboardViewModel: ObservableObject {
         transactions
             .filter { transaction in
                 guard let date = transaction.date else { return false }
-                return date >= range.start && date < range.end && transaction.isExpense
+                return date >= range.start && date < range.end && transaction.isRealExpense
             }
             .reduce(0) { $0 + abs($1.amount) }
     }
@@ -81,7 +81,7 @@ class DashboardViewModel: ObservableObject {
         // Filter to expense transactions in the provided date range
         let expensesInRange: [Transaction] = transactions.filter { transaction in
             guard let date = transaction.date else { return false }
-            return date >= range.start && date < range.end && transaction.isExpense
+            return date >= range.start && date < range.end && transaction.isRealExpense
         }
 
         // Group by Category objectID, filtering out nil categories
@@ -120,7 +120,7 @@ class DashboardViewModel: ObservableObject {
         let calendar = Calendar.current
         let expensesInRange = transactions.filter { transaction in
             guard let date = transaction.date else { return false }
-            return date >= range.start && date < range.end && transaction.isExpense
+            return date >= range.start && date < range.end && transaction.isRealExpense
         }
         
         let dailyTotals = Dictionary(grouping: expensesInRange) { transaction -> Date in

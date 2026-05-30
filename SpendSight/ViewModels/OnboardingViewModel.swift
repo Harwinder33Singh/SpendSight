@@ -8,6 +8,8 @@
 import SwiftUI
 import CoreData
 import Combine
+internal import Auth
+import Supabase
 
 @MainActor
 class OnboardingViewModel: ObservableObject {
@@ -34,32 +36,39 @@ class OnboardingViewModel: ObservableObject {
     let availableCurrencies = ["USD", "EUR", "GBP", "INR", "CAD", "AUD"]
     
     // Default categories (user can select which ones they want)
-    let defaultCategories: [(name: String, color: String, icon: String, budget: Double?)] = [
-        ("Groceries", "#4CAF50", "cart.fill", 500),
-        ("Coffee", "#6F4E37", "cup.and.saucer.fill", 80),
-        ("Dining Out", "#FF9800", "fork.knife", 200),
-        ("Transportation", "#2196F3", "car.fill", 150),
-        ("Fuel", "#FF6F00", "fuelpump.fill", 180),
-        ("Entertainment", "#9C27B0", "film.fill", 100),
-        ("Shopping", "#E91E63", "bag.fill", 200),
-        ("Utilities", "#795548", "bolt.fill", 300),
-        ("Healthcare", "#F44336", "cross.case.fill", nil),
-        ("Hotel", "#3F51B5", "bed.double.fill", 250),
-        ("Flight", "#00ACC1", "airplane", 300),
-        ("Travel", "#26A69A", "suitcase.rolling.fill", 400),
-        ("Subscriptions", "#7E57C2", "tv.fill", 50),
-        ("Credit Card Payment", "#FF5722", "creditcard.and.123", nil),
-        ("Income", "#8BC34A", "dollarsign.circle.fill", nil),
-        ("Other", "#9E9E9E", "questionmark.circle.fill", nil),
-        ("Housing", "#607D8B", "house.fill", 1500)
+    let defaultCategories: [(name: String, color: String, icon: String, budget: Double?, type: Category.CategoryType)] = [
+        ("Groceries",           "#4CAF50", "cart.fill",               500,  .expense),
+        ("Coffee",              "#6F4E37", "cup.and.saucer.fill",      80,   .expense),
+        ("Dining Out",          "#FF9800", "fork.knife",               200,  .expense),
+        ("Transportation",      "#2196F3", "car.fill",                 150,  .expense),
+        ("Fuel",                "#FF6F00", "fuelpump.fill",            180,  .expense),
+        ("Entertainment",       "#9C27B0", "film.fill",                100,  .expense),
+        ("Shopping",            "#E91E63", "bag.fill",                 200,  .expense),
+        ("Utilities",           "#795548", "bolt.fill",                300,  .expense),
+        ("Healthcare",          "#F44336", "cross.case.fill",          nil,  .expense),
+        ("Hotel",               "#3F51B5", "bed.double.fill",          250,  .expense),
+        ("Flight",              "#00ACC1", "airplane",                 300,  .expense),
+        ("Travel",              "#26A69A", "suitcase.rolling.fill",    400,  .expense),
+        ("Subscriptions",       "#7E57C2", "tv.fill",                  50,   .expense),
+        ("Credit Card Payment", "#FF5722", "creditcard.and.123",       nil,  .expense),
+        ("Income",              "#8BC34A", "dollarsign.circle.fill",   nil,  .income),
+        ("Other",               "#9E9E9E", "questionmark.circle.fill", nil,  .expense),
+        ("Housing",             "#607D8B", "house.fill",               1500, .expense),
     ]
     
     // MARK: - Initialization
     
     init(context: NSManagedObjectContext) {
         self.context = context
-        // Pre-select all categories by default
         self.selectedCategories = Set(defaultCategories.map { $0.name })
+
+        // Pre-fill from Supabase auth — no need to ask again
+        if let user = AuthService.shared.currentUser {
+            if case .string(let name) = user.userMetadata["full_name"] {
+                self.fullName = name
+            }
+            self.email = user.email ?? ""
+        }
     }
     
     // MARK: - Navigation
@@ -67,11 +76,7 @@ class OnboardingViewModel: ObservableObject {
     func nextStep() {
         switch currentStep {
         case .welcome:
-            currentStep = .personalInfo
-        case .personalInfo:
-            if validatePersonalInfo() {
-                currentStep = .categories
-            }
+            currentStep = .categories
         case .categories:
             if validateCategories() {
                 currentStep = .accounts
@@ -82,15 +87,13 @@ class OnboardingViewModel: ObservableObject {
             completeOnboarding()
         }
     }
-    
+
     func previousStep() {
         switch currentStep {
         case .welcome:
             break
-        case .personalInfo:
-            currentStep = .welcome
         case .categories:
-            currentStep = .personalInfo
+            currentStep = .welcome
         case .accounts:
             currentStep = .categories
         case .security:
@@ -103,26 +106,6 @@ class OnboardingViewModel: ObservableObject {
     }
     
     // MARK: - Validation
-    
-    private func validatePersonalInfo() -> Bool {
-        let trimmedName = fullName.trimmingCharacters(in: .whitespaces)
-        
-        guard !trimmedName.isEmpty else {
-            showError(message: "Please enter your name")
-            return false
-        }
-        
-        if !email.isEmpty {
-            let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-            let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-            guard emailPredicate.evaluate(with: email) else {
-                showError(message: "Please enter a valid email address")
-                return false
-            }
-        }
-        
-        return true
-    }
     
     private func validateCategories() -> Bool {
         guard !selectedCategories.isEmpty else {
@@ -184,12 +167,13 @@ class OnboardingViewModel: ObservableObject {
         // Create selected categories
         for categoryName in selectedCategories {
             if let categoryData = defaultCategories.first(where: { $0.name == categoryName }) {
-                let category = Category(
+                _ = Category(
                     context: context,
                     name: categoryData.name,
                     colorHex: categoryData.color,
                     icon: categoryData.icon,
-                    monthlyBudget: categoryData.budget
+                    monthlyBudget: categoryData.budget,
+                    categoryType: categoryData.type
                 )
             }
         }
@@ -225,9 +209,14 @@ class OnboardingViewModel: ObservableObject {
         // Save everything
         do {
             try context.save()
-
-            // Store onboarding completion in UserDefaults
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+
+            // Persist onboarding flag to Supabase so returning users on new devices skip it
+            Task {
+                try? await supabase.auth.update(
+                    user: UserAttributes(data: ["onboarding_completed": AnyJSON.bool(true)])
+                )
+            }
 
             isLoading = false
             didCompleteOnboarding = true
@@ -266,33 +255,25 @@ class OnboardingViewModel: ObservableObject {
 
 enum OnboardingStep: Int, CaseIterable {
     case welcome = 0
-    case personalInfo = 1
-    case categories = 2
-    case accounts = 3
-    case security = 4
-    
+    case categories = 1
+    case accounts = 2
+    case security = 3
+
     var title: String {
         switch self {
-        case .welcome: return "Welcome to SpendSight"
-        case .personalInfo: return "Personal Information"
+        case .welcome:    return "Welcome to SpendSight"
         case .categories: return "Choose Categories"
-        case .accounts: return "Add Your Accounts"
-        case .security: return "Security Settings"
+        case .accounts:   return "Add Your Accounts"
+        case .security:   return "Security Settings"
         }
     }
-    
+
     var description: String {
         switch self {
-        case .welcome:
-            return "Let's get you set up to start tracking your spending"
-        case .personalInfo:
-            return "Tell us a bit about yourself"
-        case .categories:
-            return "Select the expense categories you want to track"
-        case .accounts:
-            return "Add your bank accounts, credit cards, and payment methods"
-        case .security:
-            return "Secure your financial data"
+        case .welcome:    return "Let's get you set up to start tracking your spending"
+        case .categories: return "Select the expense categories you want to track"
+        case .accounts:   return "Add your bank accounts, credit cards, and payment methods"
+        case .security:   return "Secure your financial data"
         }
     }
 }
