@@ -9,6 +9,7 @@ class AuthService: ObservableObject {
     @Published var isAuthenticated = false
     @Published var currentUser: User?
     @Published var isLoading = false
+    @Published var needsEmailConfirmation = false
 
     private init() {}
 
@@ -63,7 +64,15 @@ class AuthService: ObservableObject {
             data: ["full_name": AnyJSON.string(fullName)]
         )
         currentUser = response.user
-        isAuthenticated = true
+
+        if response.session != nil {
+            // Auto-confirm enabled in Supabase — proceed directly
+            isAuthenticated = true
+            needsEmailConfirmation = false
+        } else {
+            // Confirmation email sent — user must confirm then sign in
+            needsEmailConfirmation = true
+        }
     }
 
     // MARK: - Email Sign In

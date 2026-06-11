@@ -63,6 +63,28 @@ class CategorySeeder {
         }
     }
     
+    /// Seeds only the named categories (from the defaults list) — used when restoring
+    /// a returning user's selection on a new device.
+    static func seedSpecific(names: [String], modelContext: NSManagedObjectContext) {
+        guard !hasSeeded else { return }
+
+        for categoryData in defaultCategories where names.contains(categoryData.name) {
+            _ = Category(
+                context: modelContext,
+                name: categoryData.name,
+                colorHex: categoryData.color,
+                icon: categoryData.icon,
+                monthlyBudget: categoryData.budget,
+                categoryType: categoryData.type
+            )
+        }
+
+        do {
+            try modelContext.save()
+            markAsSeeded()
+        } catch {}
+    }
+
     // MARK: - Migration
 
     /// Fixes existing Income category whose typeRaw was incorrectly seeded as "expense"

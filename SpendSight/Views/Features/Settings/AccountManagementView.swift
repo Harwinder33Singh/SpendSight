@@ -97,6 +97,7 @@ struct AccountManagementView: View {
     }
 
     private func deleteAccount(_ account: Account) {
+        ManualSyncService.shared.deleteAccount(account)
         withAnimation {
             context.delete(account)
             context.saveIfNeeded()

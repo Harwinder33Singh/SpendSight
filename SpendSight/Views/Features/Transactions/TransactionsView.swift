@@ -67,86 +67,21 @@ struct TransactionsView: View {
                 }
             }
             .refreshable {
-                // Refresh data (mainly useful if you add sync later)
-                await syncPlaidTransactions()
-                context.refreshAllObjects()
-                
+                await syncAllTransactions()
             }
         }
     }
-    
-    private func syncPlaidTransactions() async {
-        do {
-            let plaidTransactions = try await PlaidService.shared.syncTransactions()
-            
-            guard !plaidTransactions.isEmpty else { return }
-            
-            await context.perform {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd"
-                
-                for plaidTx in plaidTransactions {
-                    // Skip pending
-                    if plaidTx.pending == true { continue }
-                    
-                    // Skip duplicates
-                    let request = Transaction.fetchRequest()
-                    request.predicate = NSPredicate(
-                        format: "plaidTransactionId == %@",
-                        plaidTx.plaidTransactionId
-                    )
-                    request.fetchLimit = 1
-                    if let existing = try? context.fetch(request), !existing.isEmpty { continue }
-                    
-                    // Find account
-                    let accountRequest = Account.fetchRequest()
-                    accountRequest.predicate = NSPredicate(
-                        format: "plaidItemId == %@",
-                        plaidTx.itemId ?? ""
-                    )
-                    accountRequest.fetchLimit = 1
-                    guard let account = try? context.fetch(accountRequest).first else { continue }
-                    
-                    // Find category
-                    let categoryName = PlaidCategoryMapper.mapToSpendSight(plaidTx.plaidCategory)
-                    let categoryRequest = Category.fetchRequest()
-                    categoryRequest.predicate = NSPredicate(format: "name ==[cd] %@", categoryName)
-                    categoryRequest.fetchLimit = 1
-                    
-                    var category = try? context.fetch(categoryRequest).first
-                    if category == nil {
-                        let fallback = Category.fetchRequest()
-                        fallback.predicate = NSPredicate(format: "name ==[cd] %@", "Other")
-                        fallback.fetchLimit = 1
-                        category = try? context.fetch(fallback).first
-                    }
-                    
-                    guard let category = category else { continue }
-                    
-                    let date = dateFormatter.date(from: plaidTx.date) ?? Date()
-                    let amount = -plaidTx.amount
-                    
-                    let transaction = Transaction(context: context)
-                    transaction.id = UUID()
-                    transaction.amount = amount
-                    transaction.title = plaidTx.merchantName ?? "Transaction"
-                    transaction.merchant = plaidTx.merchantName ?? ""
-                    transaction.date = date
-                    transaction.paymentMethod = "Bank"
-                    transaction.isRecurring = false
-                    transaction.category = category
-                    transaction.account = account
-                    transaction.plaidTransactionId = plaidTx.plaidTransactionId
-                    transaction.createdAt = Date()
-                    transaction.updatedAt = Date()
-                }
-                
-                try? context.save()
-            }
-        } catch {
-            // Sync failed silently — user can try again
-            print("Plaid sync failed: \(error.localizedDescription)")
-        }
+
+    // Sync Plaid and manual transactions concurrently.
+    private func syncAllTransactions() async {
+        async let plaid: Void = syncPlaid()
+        async let manual: Void = ManualSyncService.shared.restoreManualData(context: context)
+        _ = await (plaid, manual)
+    }
+
+    private func syncPlaid() async {
+        guard let txs = try? await PlaidService.shared.syncTransactions() else { return }
+        await PlaidImporter.shared.importTransactions(txs, into: context)
     }
     
     // MARK: - Filtered Transactions

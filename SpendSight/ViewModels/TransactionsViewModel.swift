@@ -207,8 +207,9 @@ class TransactionsViewModel: ObservableObject {
     // MARK: - Delete Transaction
     
     func deleteTransaction(_ transaction: Transaction, context: NSManagedObjectContext) {
+        ManualSyncService.shared.deleteTransaction(transaction)
         context.delete(transaction)
-        
+
         do {
             try context.save()
         } catch {

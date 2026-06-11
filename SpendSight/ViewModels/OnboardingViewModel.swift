@@ -150,6 +150,7 @@ class OnboardingViewModel: ObservableObject {
     // MARK: - Onboarding Completion
 
     func completeOnboarding() {
+        guard !isLoading else { return }
         isLoading = true
 
         // Sync data with Account Info settings (AppStorage)
@@ -163,6 +164,12 @@ class OnboardingViewModel: ObservableObject {
             phone: phone.isEmpty ? nil : phone,
             currency: selectedCurrency
         )
+
+        // Wipe any leftover categories from a previous account on this device
+        // before creating this user's selection so we never end up with duplicates.
+        let existingRequest: NSFetchRequest<NSFetchRequestResult> = Category.fetchRequest()
+        let deleteExisting = NSBatchDeleteRequest(fetchRequest: existingRequest)
+        try? context.execute(deleteExisting)
 
         // Create selected categories
         for categoryName in selectedCategories {
@@ -209,12 +216,21 @@ class OnboardingViewModel: ObservableObject {
         // Save everything
         do {
             try context.save()
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
 
-            // Persist onboarding flag to Supabase so returning users on new devices skip it
+            // Per-user key so sign-out never clears it
+            if let userId = AuthService.shared.currentUser?.id.uuidString {
+                UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding_\(userId)")
+            }
+
+            // Persist to Supabase so returning users on new devices skip onboarding
+            // and restore their exact category selection without re-asking.
+            let categoryArray = AnyJSON.array(Array(selectedCategories).map { AnyJSON.string($0) })
             Task {
                 try? await supabase.auth.update(
-                    user: UserAttributes(data: ["onboarding_completed": AnyJSON.bool(true)])
+                    user: UserAttributes(data: [
+                        "onboarding_completed": AnyJSON.bool(true),
+                        "selected_categories": categoryArray
+                    ])
                 )
             }
 

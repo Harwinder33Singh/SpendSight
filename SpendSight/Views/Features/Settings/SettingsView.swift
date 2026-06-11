@@ -7,14 +7,15 @@
 
 import SwiftUI
 import CoreData
-import MessageUI
 import StoreKit
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var context
     @Environment(\.requestReview) private var requestReview
+    @EnvironmentObject private var coordinator: AppCoordinator
     @AppStorage("userName") private var userName: String = ""
     @State private var showDeleteConfirmation = false
+    @State private var showSignOutConfirmation = false
     @State private var showMailComposer = false
     @State private var showAccountInfo = false
     @State private var showNotifications = false
@@ -85,6 +86,14 @@ struct SettingsView: View {
                 ConnectedAccountsView()
                     .environment(\.managedObjectContext, context)
             }
+            .alert("Sign Out", isPresented: $showSignOutConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Sign Out", role: .destructive) {
+                    coordinator.logout()
+                }
+            } message: {
+                Text("Are you sure you want to sign out?")
+            }
             .alert("Delete All Data", isPresented: $showDeleteConfirmation) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete All", role: .destructive) {
@@ -124,6 +133,19 @@ struct SettingsView: View {
                     iconColor: .orange
                 ) {
                     showNotifications = true
+                }
+
+                Divider()
+                    .padding(.leading, 44)
+
+                SettingsRow(
+                    icon: "rectangle.portrait.and.arrow.right",
+                    title: "Sign Out",
+                    subtitle: "Sign out of your account",
+                    iconColor: .red,
+                    isDestructive: true
+                ) {
+                    showSignOutConfirmation = true
                 }
             }
             .background(

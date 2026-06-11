@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RootTabView: View {
+    @Environment(\.managedObjectContext) private var context
+
     var body: some View {
         TabView {
             DashboardView()
@@ -16,7 +18,7 @@ struct RootTabView: View {
                 }
             ManualEntryView()
                 .tabItem {
-                    Label("Manual Entry", systemImage: "doc.fill.badge.plus")
+                    Label("Add", systemImage: "doc.fill.badge.plus")
                 }
             TransactionsView()
                 .tabItem {
@@ -25,6 +27,10 @@ struct RootTabView: View {
             BudgetsView()
                 .tabItem {
                     Label("Budget", systemImage: "target")
+                }
+            AIAdvisorView(context: context)
+                .tabItem {
+                    Label("Advisor", systemImage: "sparkles")
                 }
             SettingsView()
                 .tabItem {

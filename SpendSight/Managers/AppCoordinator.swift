@@ -10,6 +10,7 @@ import CoreData
 import Combine
 import OSLog
 internal import Auth
+import Supabase
 
 private let logger = Logger(subsystem: "com.harwinder.SpendSight", category: "AppCoordinator")
 
@@ -38,6 +39,16 @@ class AppCoordinator: ObservableObject {
         CategorySeeder.fixIncomeTypeMigration(modelContext: context)
 
         Task {
+            // Keychain data survives app deletion on iOS. On the very first launch
+            // after a fresh install, UserDefaults is empty but a stale Keychain
+            // session may exist, which would bypass auth entirely. Clear it so the
+            // user always sees the sign-in screen after reinstalling.
+            let freshInstall = !UserDefaults.standard.bool(forKey: "appHasLaunchedBefore")
+            if freshInstall {
+                UserDefaults.standard.set(true, forKey: "appHasLaunchedBefore")
+                try? await supabase.auth.signOut()
+            }
+
             await AuthService.shared.initialize()
 
             if !AuthService.shared.isAuthenticated {
@@ -65,8 +76,6 @@ class AppCoordinator: ObservableObject {
     // MARK: - Logout
     
     func logout() {
-        UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-        UserDefaults.standard.set(false, forKey: "hasSeededCategories")
         deleteAllData()
 
         Task {
@@ -76,15 +85,37 @@ class AppCoordinator: ObservableObject {
     }
 
     func authDidSignIn() {
-        Task { await resolvePostAuthState() }
+        Task {
+            await resolvePostAuthState()
+            await syncPlaidAfterSignIn()
+            await ProfileService.shared.fetchProfile()
+            await ManualSyncService.shared.restoreManualData(context: context)
+        }
     }
 
-    // Checks Supabase user metadata first, then falls back to UserDefaults.
-    // This means a returning user on a new device goes straight to main.
-    private func resolvePostAuthState() async {
-        let localFlag = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    private func syncPlaidAfterSignIn() async {
+        do {
+            let transactions = try await PlaidService.shared.syncTransactions()
+            guard !transactions.isEmpty else { return }
+            await PlaidImporter.shared.importTransactions(transactions, into: context)
+            UserDefaults.standard.set(true, forKey: "hasConnectedBank")
+        } catch {
+            logger.error("Post-login Plaid sync failed: \(error.localizedDescription)")
+        }
+    }
 
-        // Check the flag stored in Supabase user metadata
+    // Checks both a per-user UserDefaults key and Supabase user metadata.
+    // Per-user key means logout never clears it, and a different user on same device
+    // gets their own flag. Remote metadata handles new-device sign-ins.
+    private func resolvePostAuthState() async {
+        guard let userId = AuthService.shared.currentUser?.id.uuidString else {
+            appState = .unauthenticated
+            return
+        }
+
+        let userKey = "hasCompletedOnboarding_\(userId)"
+        let localFlag = UserDefaults.standard.bool(forKey: userKey)
+
         let remoteFlag: Bool = {
             guard let user = AuthService.shared.currentUser,
                   case .bool(let v) = user.userMetadata["onboarding_completed"] else {
@@ -95,12 +126,37 @@ class AppCoordinator: ObservableObject {
 
         let hasOnboarded = localFlag || remoteFlag
 
-        // Sync back to UserDefaults so future launches are instant
         if remoteFlag && !localFlag {
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.set(true, forKey: userKey)
         }
 
-        appState = hasOnboarded ? .main : .onboarding
+        if hasOnboarded {
+            if remoteFlag && !localFlag {
+                // New device for a returning user — restore their specific category
+                // selection from Supabase instead of seeding all defaults.
+                seedCategoriesFromMetadata()
+            } else {
+                CategorySeeder.seedIfNeeded(modelContext: context)
+            }
+            appState = .main
+        } else {
+            appState = .onboarding
+        }
+    }
+
+    private func seedCategoriesFromMetadata() {
+        if let user = AuthService.shared.currentUser,
+           case .array(let arr) = user.userMetadata["selected_categories"] {
+            let names = arr.compactMap { item -> String? in
+                if case .string(let s) = item { return s }
+                return nil
+            }
+            if !names.isEmpty {
+                CategorySeeder.seedSpecific(names: names, modelContext: context)
+                return
+            }
+        }
+        CategorySeeder.seedIfNeeded(modelContext: context)
     }
     
     // MARK: - Data Management
@@ -114,10 +170,6 @@ class AppCoordinator: ObservableObject {
         let transactionRequest: NSFetchRequest<NSFetchRequestResult> = Transaction.fetchRequest()
         let deleteTransactions = NSBatchDeleteRequest(fetchRequest: transactionRequest)
 
-        // Delete categories
-        let categoryRequest: NSFetchRequest<NSFetchRequestResult> = Category.fetchRequest()
-        let deleteCategories = NSBatchDeleteRequest(fetchRequest: categoryRequest)
-
         // Delete accounts
         let accountRequest: NSFetchRequest<NSFetchRequestResult> = Account.fetchRequest()
         let deleteAccounts = NSBatchDeleteRequest(fetchRequest: accountRequest)
@@ -130,16 +182,18 @@ class AppCoordinator: ObservableObject {
         let savingsRequest: NSFetchRequest<NSFetchRequestResult> = SavingsPlan.fetchRequest()
         let deleteSavings = NSBatchDeleteRequest(fetchRequest: savingsRequest)
 
+        // Categories are intentionally kept — they are user configuration (including
+        // custom categories) and are re-seeded from defaults if missing on next sign-in.
+
         do {
             try context.execute(deleteUsers)
             try context.execute(deleteTransactions)
-            try context.execute(deleteCategories)
             try context.execute(deleteAccounts)
             try context.execute(deleteIncome)
             try context.execute(deleteSavings)
             try context.save()
         } catch {
-            logger.error("Failed to delete all user data during logout: \(error.localizedDescription)")
+            logger.error("Failed to delete user data during logout: \(error.localizedDescription)")
         }
     }
 }

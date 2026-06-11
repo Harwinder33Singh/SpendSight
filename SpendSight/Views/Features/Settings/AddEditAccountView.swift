@@ -229,6 +229,15 @@ struct AddEditAccountView: View {
             account.type = type
             account.institution = trimmedInstitution.isEmpty ? nil : trimmedInstitution
             account.last4 = trimmedLast4.isEmpty ? nil : trimmedLast4
+
+            do {
+                try context.save()
+                ManualSyncService.shared.syncAccount(account)
+                dismiss()
+            } catch {
+                errorMessage = "Failed to save account: \(error.localizedDescription)"
+                showingError = true
+            }
         } else {
             // Create new account
             let newAccount = Account(
@@ -239,9 +248,9 @@ struct AddEditAccountView: View {
                 last4: trimmedLast4.isEmpty ? nil : trimmedLast4
             )
 
-            // Add initial balance as income if provided
+            var initialIncome: Income?
             if hasInitialBalance, let balanceValue = Double(initialBalance), balanceValue != 0 {
-                let _ = Income(
+                initialIncome = Income(
                     context: context,
                     amount: balanceValue,
                     source: "Initial Balance",
@@ -249,14 +258,18 @@ struct AddEditAccountView: View {
                     account: newAccount
                 )
             }
-        }
 
-        do {
-            try context.save()
-            dismiss()
-        } catch {
-            errorMessage = "Failed to save account: \(error.localizedDescription)"
-            showingError = true
+            do {
+                try context.save()
+                ManualSyncService.shared.syncAccount(newAccount)
+                if let income = initialIncome {
+                    ManualSyncService.shared.syncIncome(income)
+                }
+                dismiss()
+            } catch {
+                errorMessage = "Failed to save account: \(error.localizedDescription)"
+                showingError = true
+            }
         }
     }
 

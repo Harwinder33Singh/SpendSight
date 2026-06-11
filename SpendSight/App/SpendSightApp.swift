@@ -28,13 +28,16 @@ import CoreData
 
 @main
 struct SpendSightApp: App {
-    
+
     // Persistence
     let persistenceController = PersistenceController.shared
-    
+
     // State management
     @StateObject private var coordinator: AppCoordinator
-    
+
+    // Prevents concurrent background syncs from racing
+    @State private var isSyncing = false
+
     init() {
         let context = PersistenceController.shared.container.viewContext
         _coordinator = StateObject(wrappedValue: AppCoordinator(context: context))
@@ -74,20 +77,19 @@ struct SpendSightApp: App {
                 coordinator.checkAppState(coreDataError: persistenceController.loadError)
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                guard AuthService.shared.isAuthenticated, !isSyncing else { return }
                 let context = persistenceController.container.viewContext
-                let connected = UserDefaults.standard.bool(forKey: "hasConnectedBank")
-                guard connected, AuthService.shared.isAuthenticated else { return }
-
-                Task {
-                    do {
-                        let transactions = try await PlaidService.shared.syncTransactions()
-                        guard !transactions.isEmpty else { return }
-                        await PlaidImporter.shared.importTransactions(transactions, into: context)
-                    } catch {
-                        print("Background sync failed: \(error)")
+                isSyncing = true
+                Task { @MainActor in
+                    defer { isSyncing = false }
+                    if UserDefaults.standard.bool(forKey: "hasConnectedBank"),
+                       let txs = try? await PlaidService.shared.syncTransactions() {
+                        await PlaidImporter.shared.importTransactions(txs, into: context)
                     }
+                    await ManualSyncService.shared.restoreManualData(context: context)
                 }
-            }        }
+            }
+        }
     }
 }
 

@@ -7,6 +7,7 @@ struct AuthView: View {
     @State private var password = ""
     @State private var fullName = ""
     @State private var errorMessage: String?
+    @State private var confirmationBanner: String?
     @State private var showForgotPassword = false
     @State private var resetEmailSent = false
     @FocusState private var focused: Field?
@@ -69,6 +70,20 @@ struct AuthView: View {
                         .focused($focused, equals: .password)
                         .submitLabel(.go)
                         .onSubmit { Task { await submit() } }
+
+                        if let banner = confirmationBanner {
+                            HStack(spacing: 8) {
+                                Image(systemName: "envelope.badge.fill")
+                                    .foregroundStyle(.blue)
+                                Text(banner)
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
 
                         if let error = errorMessage {
                             HStack(spacing: 8) {
@@ -152,6 +167,7 @@ struct AuthView: View {
     private func submit() async {
         focused = nil
         errorMessage = nil
+        confirmationBanner = nil
         do {
             if mode == .signIn {
                 try await auth.signIn(email: email.trimmingCharacters(in: .whitespaces),
@@ -160,6 +176,10 @@ struct AuthView: View {
                 try await auth.signUp(email: email.trimmingCharacters(in: .whitespaces),
                                      password: password,
                                      fullName: fullName.trimmingCharacters(in: .whitespaces))
+                if auth.needsEmailConfirmation {
+                    withAnimation { mode = .signIn }
+                    confirmationBanner = "Check your email to confirm your account, then sign in."
+                }
             }
         } catch {
             errorMessage = friendlyError(error)
@@ -180,7 +200,17 @@ struct AuthView: View {
         if msg.contains("network") || msg.contains("offline") {
             return "No internet connection."
         }
+        if msg.contains("rate limit") || msg.contains("too many") {
+            return "Too many attempts. Please wait a minute and try again."
+        }
+        if msg.contains("email") && msg.contains("invalid") {
+            return "Please enter a valid email address."
+        }
+        #if DEBUG
+        return error.localizedDescription
+        #else
         return "Something went wrong. Please try again."
+        #endif
     }
 }
 

@@ -338,7 +338,7 @@ struct ManualEntryView: View {
 
         do {
             // Use the new validation service to create the transaction
-            let _ = try context.createValidatedTransaction(
+            let savedTransaction = try context.createValidatedTransaction(
                 title: finalTitle,
                 amount: signedAmount,
                 date: selectedDate,
@@ -350,6 +350,9 @@ struct ManualEntryView: View {
 
             // Save with validation
             try context.saveWithValidation()
+
+            // Sync to Supabase so data survives app deletion
+            ManualSyncService.shared.syncTransaction(savedTransaction)
 
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
